@@ -1,0 +1,44 @@
+\section{Relative-motion models}\label{sec:models}
+
+% OUTLINE (proposal Sec. 1.1-1.6, condensed to ~3 pages):
+% - LVLH frame and CW equations, closed-form STM
+% - J2 secular rates; differential drift as the operational problem
+% - Schweighart-Sedwick LTI plant (s, c coefficients, cross-track forcing)
+% - Gim-Alfriend geometric STM: A(t) Sigma(t,t0) B(t0) composition; our
+%   numerically-linearized implementation of the same construction
+% - Koenig-Guffanti-D'Amico qns ROE J2 STM (JGCD 2017 Eq. A6), state
+%   definition, and the ROE->RTN linear map
+% - geometry families: along-track, PCO, GERO, E/I-vector safe;
+%   J2-invariant conditions (Schaub-Alfriend 2001)
+
+\subsection{LVLH frame and Clohessy--Wiltshire baseline}
+% TODO: condense proposal Sec. 1.1
+
+\subsection{J2 secular dynamics and differential drift}
+% TODO: condense proposal Sec. 1.2; cite Brouwer 1959
+
+\subsection{Schweighart--Sedwick LTI plant}
+% TODO: equations with verified s, c, q, l coefficients
+
+\subsection{Gim--Alfriend geometric STM}
+% TODO: describe the numerically-linearized A Sigma B implementation and its
+% equivalence (to first order in J2) with the closed-form GA-STM
+
+\subsection{Quasi-nonsingular ROE and the KGD STM}
+% TODO: state definition, Eq. (A6) restated, drift structure
+
+\begin{figure}[t]
+  \centering
+  \genfig{fig1_geometry}{0.95}{\texttt{python -m eilj2.figures.fig1\_geometry}}
+  \caption{Formation geometry families in the LVLH frame.}
+  \label{fig:geometry}
+\end{figure}
+
+\begin{figure}[t]
+  \centering
+  \genfig{fig2_validation}{0.95}{\texttt{python scripts/run\_validation.py}}
+  \caption{Analytic-model prediction error against the $J_2$--$J_4$
+  numerical truth over 30 days (per-orbit RMS, 1\,km E/I-safe formation).
+  Expected ordering: CW $\gg$ S--S $>$ GA $\approx$ KGD.}
+  \label{fig:validation}
+\end{figure}

@@ -1,0 +1,36 @@
+\section{Introduction}\label{sec:intro}
+
+% OUTLINE (proposal Sec. 5.3 item 1):
+% - operational problem: differential J2 drift must be actively suppressed
+% - why nav-vs-control matters: u = -K x_hat couples estimator covariance to
+%   fuel cost; mission designers need to read off the delta-V consequence of
+%   the nav budget they can afford
+% - position against Koenig & D'Amico 2018 (five-item novelty list) and the
+%   2025 cislunar analog literature
+% - contributions and paper organization
+
+Formation-flying missions in low Earth orbit (LEO) --- PRISMA
+\cite{damico2012prisma}, TanDEM-X \cite{montenbruck2008tandemx}, GRACE-FO
+\cite{kornfeld2019gracefo}, NASA Starling \cite{kruger2025starling}, and the
+upcoming VISORS telescope \cite{guffanti2023visors} --- must continuously
+counteract the differential secular drift induced by the Earth-oblateness
+$J_2$ harmonic. The controller that performs this formation-keeping never
+sees the true relative state: it acts on the estimate produced by a relative
+navigation filter, so the achievable delta-V budget is a joint function of
+the navigation accuracy, the controller family, and the fidelity of the
+relative-motion model used for prediction.
+
+The single most-cited systematic treatment of this coupling, Koenig \&
+D'Amico \cite{koenig2018tradeoffs}, characterizes the trade in an LTI,
+near-circular, LQR-only setting with the estimator abstracted as a static
+covariance floor. This paper extends that analysis along five axes:
+(i) three controllers instead of one; (ii) three relative-motion STMs
+including the modern quasi-nonsingular ROE STM
+\cite{koenig2017stm}; (iii) three realistic measurement architectures with
+actual filters running in the loop, not a static covariance; (iv) a Pareto
+\emph{surface} instead of a single trade curve; and (v) an explicit
+characterization of the regime where the certainty-equivalence assumption
+breaks down.
+
+% TODO: paragraph on the cislunar analogs (Bandyopadhyay 2025, Hunter 2025)
+% TODO: contributions list + organization paragraph

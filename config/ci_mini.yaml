@@ -1,0 +1,26 @@
+﻿# Tiny end-to-end campaign for CI: 4 points x 2 seeds, ~2 days sim time,
+# STM truth. Verifies the campaign driver + parquet + resume machinery.
+
+out_dir: data/ci_mini
+n_seeds: 2
+seed_root: 20260712
+
+base:
+  a: 7078137.0
+  e: 0.001
+  i_deg: 98.0
+  duration_days: 2.0
+  dt: 60.0
+  truth: stm
+  truth_model: kgd
+  filter_kind: ekf
+  family: ei_safe
+  size: 1000.0
+  ctrl_model: cw
+  ctrl_warmup_orbits: 1.0
+
+grid:
+  controller: [lqr, impulsive]
+  meas:
+    - {meas_kind: cdgps, meas_sigma: 0.1}
+    - {meas_kind: rf, meas_sigma: 1.0}

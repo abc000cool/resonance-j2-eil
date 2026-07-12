@@ -1,0 +1,27 @@
+\section{Relative navigation and error-state filtering}\label{sec:nav}
+
+% OUTLINE (proposal Sec. 1.8):
+% - measurement models: CDGPS (Table 1 accuracies), RF range(+rate),
+%   angles-only bearings; Woffinden dilemma and its J2/maneuver resolution
+% - error-state EKF, Joseph form; each analytic STM as prediction model
+% - UKF ablation (Merwe sigma points)
+% - process-noise calibration against truth residuals (scripts/calibrate_q.py)
+% - consistency verification: NEES/NIS
+
+\begin{table}[t]
+  \centering
+  \caption{Measurement architectures and swept $1\sigma$ accuracies.}
+  \label{tab:sensors}
+  \begin{tabular}{lll}
+    \toprule
+    Architecture & Measurement & $\sigma$ sweep \\
+    \midrule
+    CDGPS & relative position (3D, LVLH) & 0.5--100\,cm \\
+    RF range & range + range-rate & 3\,cm--10\,m \\
+    Angles-only & bearings (az/el) & 5--300\,arcsec \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% TODO: ES-EKF equations (prediction/Joseph update), frame composition for
+% ROE-native filters, filter initialization and warm-up policy

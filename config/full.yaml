@@ -1,0 +1,57 @@
+﻿# Full tier: numerical J2-J4 truth (fast RK4 path), N = 100 seeds.
+#
+# IMPORTANT: running the complete 648-point grid at this tier costs
+# thousands of core-hours. The intended workflow (proposal Sec. 3.4) is:
+#   1. run config/screening.yaml,
+#   2. inspect the Pareto knees (scripts/find_knees.py or fig6),
+#   3. PRUNE this grid to the boundary/knee sigma points (edit `meas:` below
+#      to the 2-3 sigmas bracketing each controller's knee, and drop geometry
+#      families that screening shows to be redundant),
+#   4. run this file overnight / on a many-core machine.
+#
+# Run:  uv run python -m eilj2.campaign config/full.yaml
+
+out_dir: data/full
+n_seeds: 100
+seed_root: 20260712
+
+base:
+  a: 7078137.0
+  e: 0.001
+  i_deg: 98.0
+  duration_days: 30.0
+  dt: 60.0
+  truth: numerical
+  truth_n_zonal: 4
+  q_accel: 1.0e-13     # re-calibrate with scripts/calibrate_q.py if changed
+  filter_kind: ekf
+  u_max: 2.0e-4
+  ctrl_warmup_orbits: 2.0
+
+grid:
+  controller: [lqr, mpc, impulsive]
+  filter_model: [kgd, gim_alfriend, ss]
+  meas:
+    - {meas_kind: cdgps, meas_sigma: 0.005}
+    - {meas_kind: cdgps, meas_sigma: 0.01}
+    - {meas_kind: cdgps, meas_sigma: 0.03}
+    - {meas_kind: cdgps, meas_sigma: 0.1}
+    - {meas_kind: cdgps, meas_sigma: 0.3}
+    - {meas_kind: cdgps, meas_sigma: 1.0}
+    - {meas_kind: rf, meas_sigma: 0.03}
+    - {meas_kind: rf, meas_sigma: 0.1}
+    - {meas_kind: rf, meas_sigma: 0.3}
+    - {meas_kind: rf, meas_sigma: 1.0}
+    - {meas_kind: rf, meas_sigma: 3.0}
+    - {meas_kind: rf, meas_sigma: 10.0}
+    - {meas_kind: angles, meas_sigma: 2.42e-5}
+    - {meas_kind: angles, meas_sigma: 4.85e-5}
+    - {meas_kind: angles, meas_sigma: 1.45e-4}
+    - {meas_kind: angles, meas_sigma: 2.42e-4}
+    - {meas_kind: angles, meas_sigma: 4.85e-4}
+    - {meas_kind: angles, meas_sigma: 1.45e-3}
+  geometry:
+    - {family: along_track, size: 1000.0}
+    - {family: pco, size: 1000.0}
+    - {family: gero, size: 1000.0}
+    - {family: ei_safe, size: 1000.0}

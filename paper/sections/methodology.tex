@@ -1,0 +1,28 @@
+\section{Simulation methodology}\label{sec:method}
+
+% OUTLINE (proposal Sec. 3):
+% - pure-Python numerical truth (J2-J4 zonals, DOP853 / verified RK4 fast
+%   path); design decision vs Basilisk and the Orekit cross-validation
+%   (Table 2 from scripts/crossvalidate_orekit.py)
+% - two-tier campaign: STM-surrogate screening (648 points x 20 seeds) ->
+%   numerical-truth full tier at the Pareto knees (N = 100)
+% - seeding (SeedSequence([root, point, trial])), Parquet outputs, resume
+% - reproducibility: uv-locked env, Docker, CI, Snakemake figure DAG, Zenodo
+
+\begin{table}[t]
+  \centering
+  \caption{Truth-propagator cross-validation against Orekit over 30 days
+  (fill from \texttt{scripts/crossvalidate\_orekit.py}).}
+  \label{tab:orekit}
+  \begin{tabular}{lcc}
+    \toprule
+    & max [m] & RMS [m] \\
+    \midrule
+    chief absolute position & TODO & TODO \\
+    deputy absolute position & TODO & TODO \\
+    relative position & TODO & TODO \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% TODO
