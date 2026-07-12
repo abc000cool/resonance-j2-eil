@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "eilj2: estimation-in-the-loop J2 formation-keeping"
+type: software
+authors:
+  - name: "The Resonance Foundation"
+    email: administrator@theresonancefoundation.org
+license: MIT
+repository-code: "https://github.com/theresonancefoundation/resonance-j2-eil"
+abstract: >-
+  Open-source reference implementation for the preprint
+  "Estimation-in-the-loop J2 formation-keeping: a Pareto characterization of
+  relative-navigation accuracy versus delta-V cost": analytic relative-motion
+  STMs (CW, Schweighart-Sedwick, Gim-Alfriend, Koenig-Guffanti-D'Amico),
+  error-state EKF/UKF relative navigation, LQR/MPC/impulsive formation-keeping
+  controllers, a J2-J4 numerical truth propagator, and a tiered Monte-Carlo
+  campaign driver.
+keywords:
+  - spacecraft formation flying
+  - relative navigation
+  - Kalman filtering
+  - J2 perturbation
+preferred-citation:
+  type: article
+  title: >-
+    Estimation-in-the-loop J2 formation-keeping: a Pareto characterization of
+    relative-navigation accuracy versus delta-V cost
+  authors:
+    - name: "The Resonance Foundation"
+  year: 2026
+  notes: "arXiv preprint; update identifier after submission"

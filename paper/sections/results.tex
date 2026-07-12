@@ -1,0 +1,58 @@
+\section{Results}\label{sec:results}
+
+% OUTLINE (proposal Sec. 5.4-5.5): six result blocks in order:
+% 1. model validation (Fig. 2, already in Sec. 2)
+% 2. uncontrolled drift maps (Figs. 3-4)
+% 3. perfect-state controller Pareto (Fig. 5)
+% 4. THE headline: estimation-in-the-loop dv vs sigma_nav (Fig. 6) and the
+%    Pareto surface (Fig. 7); Table 3 knee summary from scripts/find_knees.py
+% 5. STM-fidelity ablation (Fig. 8a)
+% 6. certainty-equivalence breakdown (Fig. 8b)
+
+\subsection{Uncontrolled drift characterization}
+\begin{figure}[t]
+  \centering
+  \genfig{fig3_drift_rates}{0.95}{\texttt{python scripts/run\_drift.py}}
+  \caption{Uncontrolled drift rate vs chief inclination and formation size.}
+  \label{fig:drift}
+\end{figure}
+\begin{figure}[t]
+  \centering
+  \genfig{fig4_drift_contour}{0.55}{\texttt{python scripts/run\_drift.py}}
+  \caption{Drift rate over $(\delta a, \delta i_x)$ offsets.}
+  \label{fig:contour}
+\end{figure}
+
+\subsection{Perfect-state controller baselines}
+\begin{figure}[t]
+  \centering
+  \genfig{fig5_perfect_pareto}{0.55}{\texttt{python scripts/run\_perfect\_state.py}}
+  \caption{Perfect-navigation $\Delta V$/yr vs RMS formation-keeping error.}
+  \label{fig:perfect}
+\end{figure}
+
+\subsection{Estimation in the loop}
+\begin{figure}[t]
+  \centering
+  \genfig{fig6_dv_vs_sigma}{0.95}{\texttt{python -m eilj2.campaign config/screening.yaml}}
+  \caption{Closed-loop $\Delta V$/yr vs navigation accuracy --- the paper's
+  headline result. Expect a flat certainty-equivalence-holds regime, a
+  controller-dependent knee, and a divergent regime beyond.}
+  \label{fig:headline}
+\end{figure}
+\begin{figure}[t]
+  \centering
+  \genfig{fig7_pareto_surface}{0.95}{\texttt{python -m eilj2.campaign config/screening.yaml}}
+  \caption{Pareto surface over (nav accuracy, control precision, $\Delta V$).}
+  \label{fig:surface}
+\end{figure}
+
+\subsection{Ablations}
+\begin{figure}[t]
+  \centering
+  \genfig{fig8_ablation}{0.95}{\texttt{python -m eilj2.campaign config/ablation.yaml}}
+  \caption{(a) STM-fidelity ablation; (b) certainty-equivalence stress test.}
+  \label{fig:ablation}
+\end{figure}
+
+% TODO: Table 3 (knee summary), scaling fit dv = dv_perfect + alpha sigma_nav

@@ -1,0 +1,71 @@
+% Estimation-in-the-loop J2 formation-keeping — arXiv preprint
+% Build: latexmk -pdf main.tex   (figures regenerate via `snakemake figures`
+% or `python scripts/make_all.py --phase figures`)
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{booktabs}
+\usepackage{siunitx}
+
+\graphicspath{{figures/generated/}}
+
+% convenience: include a figure if generated, else a placeholder box
+\newcommand{\genfig}[3]{%
+  \IfFileExists{figures/generated/#1.pdf}%
+    {\includegraphics[width=#2\linewidth]{#1}}%
+    {\fbox{\parbox[c][4cm][c]{#2\linewidth}{\centering placeholder: #1\\ regenerate with #3}}}}
+
+\title{Estimation-in-the-loop J2 formation-keeping: a Pareto
+characterization of relative-navigation accuracy versus delta-V cost}
+\author{The Resonance Foundation\thanks{administrator@theresonancefoundation.org}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Spacecraft formation-flying missions in low Earth orbit must actively
+suppress the differential drift induced by the $J_2$ zonal harmonic, and the
+delta-V cost of doing so depends jointly on the controller design, the
+fidelity of the relative-motion model, and, critically, on the accuracy of
+the on-board relative navigation filter. Prior work --- most notably Koenig
+\& D'Amico~\cite{koenig2018tradeoffs} --- has characterized this trade in a
+linear time-invariant, near-circular, LQR-only setting with the estimator
+represented as a static covariance floor. We extend that analysis to a
+controller-and-plant-conditional Pareto surface using modern
+quasi-nonsingular relative orbital element state transition matrices. We
+implement three controllers (steady-state LQR on the Schweighart--Sedwick
+plant; receding-horizon MPC on the Koenig--Guffanti--D'Amico ROE STM;
+closed-form impulsive Chernick--D'Amico) and three relative-navigation
+architectures (carrier-phase differential GPS, inter-satellite RF range,
+angles-only optical) coupled through a Joseph-form error-state extended
+Kalman filter, and drive the closed loop against a numerical $J_2$--$J_4$
+truth propagator cross-validated by Orekit. Across a Monte-Carlo campaign
+spanning inclination, formation size, and nav-accuracy sweeps, we
+characterize the delta-V-versus-navigation-accuracy Pareto surface for each
+controller, identify the certainty-equivalence-breakdown regime, and
+quantify the fidelity trade between spending margin on nav accuracy versus
+on plant model. The paper is accompanied by a fully reproducible open-source
+implementation (MIT license).
+\end{abstract}
+
+\input{sections/intro}
+\input{sections/models}
+\input{sections/navigation}
+\input{sections/controllers}
+\input{sections/methodology}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

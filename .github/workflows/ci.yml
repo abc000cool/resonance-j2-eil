@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: "3.11"}
+          - {os: ubuntu-latest, python: "3.12"}
+          - {os: ubuntu-latest, python: "3.13"}
+          - {os: macos-latest, python: "3.12"}
+          - {os: windows-latest, python: "3.12"}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+      - name: Sync environment
+        run: uv sync --python ${{ matrix.python }}
+      - name: Fast tests
+        run: uv run pytest -q -m "not slow"
+      - name: Slow validation tests (one leg only)
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        run: uv run pytest -q -m "slow"
+      - name: Mini campaign end-to-end
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        run: |
+          uv run python -m eilj2.campaign config/ci_mini.yaml --n-jobs 2
+          uv run python - <<'EOF'
+          from eilj2.campaign import load_results
+          df = load_results("data/ci_mini")
+          assert len(df) == 8, f"expected 8 trials, got {len(df)}"
+          assert not df.diverged.any(), "mini campaign diverged"
+          print(df[["controller", "meas_kind", "dv_per_year", "rms_pos_err"]])
+          EOF
+      - name: Figure smoke (no data needed)
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.12'
+        run: uv run python -m eilj2.figures.fig1_geometry

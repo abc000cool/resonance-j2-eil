@@ -1,0 +1,62 @@
+﻿# Screening tier (proposal Sec. 3.4): analytic-STM truth surrogate, reduced
+# seeds. Maps the full 648-point grid cheaply to locate the Pareto knees;
+# the "interesting" points are then re-run against the numerical truth with
+# config/full.yaml.
+#
+#   3 controllers x 3 filter STMs x 18 (arch, sigma) x 4 geometries = 648 points
+#   x 20 seeds = 12,960 trials.
+#
+# Run:  uv run python -m eilj2.campaign config/screening.yaml
+
+out_dir: data/screening
+n_seeds: 20
+seed_root: 20260712
+
+base:
+  # chief: 700-km SSO-like near-circular orbit
+  a: 7078137.0
+  e: 0.001
+  i_deg: 98.0
+  duration_days: 30.0
+  dt: 60.0
+  # screening truth: KGD STM surrogate + white-accel process noise standing in
+  # for unmodeled dynamics (J3/J4, theory truncation); calibrated by
+  # scripts/calibrate_q.py against the numerical truth
+  truth: stm
+  truth_model: kgd
+  truth_process_q: 1.0e-13
+  q_accel: 1.0e-13
+  filter_kind: ekf
+  u_max: 2.0e-4
+  ctrl_warmup_orbits: 2.0
+
+grid:
+  controller: [lqr, mpc, impulsive]
+  filter_model: [kgd, gim_alfriend, ss]
+  meas:
+    # CDGPS: 1-sigma relative position per axis [m]
+    - {meas_kind: cdgps, meas_sigma: 0.005}
+    - {meas_kind: cdgps, meas_sigma: 0.01}
+    - {meas_kind: cdgps, meas_sigma: 0.03}
+    - {meas_kind: cdgps, meas_sigma: 0.1}
+    - {meas_kind: cdgps, meas_sigma: 0.3}
+    - {meas_kind: cdgps, meas_sigma: 1.0}
+    # RF inter-satellite range [m] (+ range-rate at 1e-3/s scaling)
+    - {meas_kind: rf, meas_sigma: 0.03}
+    - {meas_kind: rf, meas_sigma: 0.1}
+    - {meas_kind: rf, meas_sigma: 0.3}
+    - {meas_kind: rf, meas_sigma: 1.0}
+    - {meas_kind: rf, meas_sigma: 3.0}
+    - {meas_kind: rf, meas_sigma: 10.0}
+    # angles-only bearing [rad]: 5" 10" 30" 50" 100" 300"
+    - {meas_kind: angles, meas_sigma: 2.42e-5}
+    - {meas_kind: angles, meas_sigma: 4.85e-5}
+    - {meas_kind: angles, meas_sigma: 1.45e-4}
+    - {meas_kind: angles, meas_sigma: 2.42e-4}
+    - {meas_kind: angles, meas_sigma: 4.85e-4}
+    - {meas_kind: angles, meas_sigma: 1.45e-3}
+  geometry:
+    - {family: along_track, size: 1000.0}
+    - {family: pco, size: 1000.0}
+    - {family: gero, size: 1000.0}
+    - {family: ei_safe, size: 1000.0}

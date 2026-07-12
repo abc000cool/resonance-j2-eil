@@ -1,0 +1,35 @@
+﻿# Phase F ablations (paper Fig. 8):
+#  (a) STM-fidelity ablation - the filter/controller prediction model swept
+#      across {ss, gim_alfriend, kgd} at the tightest and loosest CDGPS
+#      sigma, numerical truth (is model fidelity worth more than nav
+#      accuracy?);
+#  (b) certainty-equivalence stress test - u = -K x_hat (lqr) vs the
+#      covariance-aware variant (lqr_cov) at the loose-nav corner.
+#
+# Run:  uv run python -m eilj2.campaign config/ablation.yaml
+
+out_dir: data/ablation
+n_seeds: 50
+seed_root: 20260712
+
+base:
+  a: 7078137.0
+  e: 0.001
+  i_deg: 98.0
+  duration_days: 30.0
+  dt: 60.0
+  truth: numerical
+  truth_n_zonal: 4
+  q_accel: 1.0e-13
+  filter_kind: ekf
+  family: ei_safe
+  size: 1000.0
+  u_max: 2.0e-4
+  ctrl_warmup_orbits: 2.0
+
+grid:
+  controller: [lqr, lqr_cov, mpc, impulsive]
+  filter_model: [ss, gim_alfriend, kgd]
+  meas:
+    - {meas_kind: cdgps, meas_sigma: 0.005}
+    - {meas_kind: cdgps, meas_sigma: 1.0}
