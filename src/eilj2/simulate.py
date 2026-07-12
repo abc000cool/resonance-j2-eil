@@ -87,6 +87,7 @@ class SimConfig:
     mpc_horizon_orbits: int = 10
     mpc_dv_weight: float = 1.0
     mpc_state_weight: float = 1e-3
+    mpc_impulses_per_orbit: int = 4
     # impulsive
     imp_deadband: float = 0.0     # [m] of scaled-ROE error; below -> no burns
     # control warm-up: no maneuvers until the filter has converged (standard
@@ -234,6 +235,7 @@ def _make_controller(cfg: SimConfig, coe_c_mean: np.ndarray):
             plan_interval_orbits=cfg.plan_interval_orbits,
             dv_weight=cfg.mpc_dv_weight,
             state_weight=cfg.mpc_state_weight,
+            impulses_per_orbit=cfg.mpc_impulses_per_orbit,
         )
     raise ValueError(f"unknown controller {cfg.controller!r}")
 
