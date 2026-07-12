@@ -68,8 +68,10 @@ class SimConfig:
     meas_kind: str = "cdgps"
     meas_sigma: float = 0.1
     meas_every_n: int = 1         # measurements every n steps
-    # filter tuning
-    q_accel: float = 1e-13        # process-noise accel PSD [(m/s^2)^2 s]
+    # filter tuning. q_accel = None selects the per-model PSD calibrated
+    # against the J2-J4 numerical truth by scripts/calibrate_q.py — each
+    # filter runs with its own honest Q (fair STM ablation).
+    q_accel: float | None = None  # process-noise accel PSD [(m/s^2)^2 s]
     p0_pos: float = 50.0          # initial 1-sigma position [m]
     p0_vel: float = 0.05          # initial 1-sigma velocity [m/s]
     init_nav_err: bool = True
@@ -240,6 +242,17 @@ def _make_controller(cfg: SimConfig, coe_c_mean: np.ndarray):
 # The closed loop
 # ---------------------------------------------------------------------------
 
+# scripts/calibrate_q.py output (J2-J4 truth, 700 km SSO, 60 s steps)
+CALIBRATED_Q_ACCEL = {
+    "cw": 6.3e-10,
+    "ss": 5.5e-10,
+    "schweighart": 5.5e-10,
+    "gim_alfriend": 8.0e-13,
+    "ga": 8.0e-13,
+    "kgd": 1.0e-14,
+}
+
+
 @dataclass
 class SimResult:
     summary: dict[str, Any]
@@ -270,6 +283,8 @@ def run_sim(cfg: SimConfig, record_history: bool = False) -> SimResult:
 
     # navigation
     fmodel = get_model(cfg.filter_model)
+    q_accel = (cfg.q_accel if cfg.q_accel is not None
+               else CALIBRATED_Q_ACCEL.get(cfg.filter_model.lower(), 1e-13))
     meas = get_measurement(cfg.meas_kind, cfg.meas_sigma)
     P0_lvlh = np.diag([cfg.p0_pos**2] * 3 + [cfg.p0_vel**2] * 3)
     coe_now = truth.chief_mean()
@@ -354,7 +369,7 @@ def run_sim(cfg: SimConfig, record_history: bool = False) -> SimResult:
         # -- filter predict + control feed-through ----------------------------
         if not perfect_nav:
             Phi = fmodel.stm(coe_now, cfg.dt)
-            Qn = native_Q(fmodel, coe_now, white_accel_Q(cfg.q_accel, cfg.dt))
+            Qn = native_Q(fmodel, coe_now, white_accel_Q(q_accel, cfg.dt))
             filt.predict(Phi, Qn)
             G = fmodel.control_input(coe_now, cfg.dt)
             if u is not None:

@@ -23,7 +23,6 @@ base:
   dt: 60.0
   truth: numerical
   truth_n_zonal: 4
-  q_accel: 1.0e-13     # re-calibrate with scripts/calibrate_q.py if changed
   filter_kind: ekf
   u_max: 2.0e-4
   ctrl_warmup_orbits: 2.0

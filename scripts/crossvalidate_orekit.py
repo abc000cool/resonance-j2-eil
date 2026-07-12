@@ -47,7 +47,7 @@ def main() -> None:
 
     from java.io import File  # noqa: F401  (JVM warm-up)
     from org.orekit.frames import FramesFactory
-    from org.orekit.orbits import CartesianOrbit, PositionAngleType  # noqa: F401
+    from org.orekit.orbits import CartesianOrbit, OrbitType
     from org.orekit.propagation.numerical import NumericalPropagator
     from org.orekit.propagation import SpacecraftState
     from org.orekit.forces.gravity import HolmesFeatherstoneAttractionModel
@@ -87,7 +87,7 @@ def main() -> None:
         orbit = CartesianOrbit(pv, frame, t0, float(MU_EARTH))
         integ = DormandPrince853Integrator(1e-6, 300.0, 1e-8, 1e-11)
         prop = NumericalPropagator(integ)
-        prop.setOrbitType(None)  # propagate cartesian
+        prop.setOrbitType(OrbitType.CARTESIAN)
         prop.addForceModel(HolmesFeatherstoneAttractionModel(
             frame, gravity))
         prop.setInitialState(SpacecraftState(orbit))

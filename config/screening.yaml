@@ -25,7 +25,6 @@ base:
   truth: stm
   truth_model: kgd
   truth_process_q: 1.0e-13
-  q_accel: 1.0e-13
   filter_kind: ekf
   u_max: 2.0e-4
   ctrl_warmup_orbits: 2.0
