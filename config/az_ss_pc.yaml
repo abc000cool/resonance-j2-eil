@@ -1,0 +1,58 @@
+﻿# Azure slice ss_pc: mpc ss pco. Superset OK - clone skips existing.
+# Full tier: numerical J2-J4 truth (fast RK4 path), N = 100 seeds.
+#
+# IMPORTANT: running the complete 648-point grid at this tier costs
+# thousands of core-hours. The intended workflow (proposal Sec. 3.4) is:
+#   1. run config/screening.yaml,
+#   2. inspect the Pareto knees (scripts/find_knees.py or fig6),
+#   3. PRUNE this grid to the boundary/knee sigma points (edit `meas:` below
+#      to the 2-3 sigmas bracketing each controller's knee, and drop geometry
+#      families that screening shows to be redundant),
+#   4. run this file overnight / on a many-core machine.
+#
+# Run:  uv run python -m eilj2.campaign config/full.yaml
+
+out_dir: data/full
+n_seeds: 100
+seed_root: 20260712
+
+base:
+  a: 7078137.0
+  e: 0.001
+  i_deg: 98.0
+  duration_days: 30.0
+  dt: 60.0
+  truth: numerical
+  truth_n_zonal: 4
+  filter_kind: ekf
+  u_max: 2.0e-4
+  ctrl_warmup_orbits: 2.0
+
+# Pruned 2026-07-14 from the completed screening tier (data/screening/knees.csv):
+#   - cdgps: knees cluster at 0.01-0.1 (median 0.01-0.02 by controller)
+#     -> keep {0.005, 0.01, 0.03, 0.1}
+#   - rf: bimodal knees (lqr ~0.3; mpc/impulsive ~5-10)
+#     -> keep {0.1, 0.3, 1.0, 10.0}
+#   - angles: knees span 4.85e-5 (lqr) to ~2.42e-4 (mpc/impulsive)
+#     -> keep {2.42e-5, 4.85e-5, 2.42e-4, 4.85e-4}
+#   - geometry: gero dropped (baseline_dv 0.88-correlated with ei_safe across
+#     the screening grid; along_track/pco/ei_safe are mutually distinct)
+# 324 points x 100 seeds.
+grid:
+  controller: [mpc]
+  filter_model: [ss]
+  meas:
+    - {meas_kind: cdgps, meas_sigma: 0.005}
+    - {meas_kind: cdgps, meas_sigma: 0.01}
+    - {meas_kind: cdgps, meas_sigma: 0.03}
+    - {meas_kind: cdgps, meas_sigma: 0.1}
+    - {meas_kind: rf, meas_sigma: 0.1}
+    - {meas_kind: rf, meas_sigma: 0.3}
+    - {meas_kind: rf, meas_sigma: 1.0}
+    - {meas_kind: rf, meas_sigma: 10.0}
+    - {meas_kind: angles, meas_sigma: 2.42e-5}
+    - {meas_kind: angles, meas_sigma: 4.85e-5}
+    - {meas_kind: angles, meas_sigma: 2.42e-4}
+    - {meas_kind: angles, meas_sigma: 4.85e-4}
+  geometry:
+    - {family: pco, size: 1000.0}
