@@ -1,0 +1,18 @@
+# Backfill (2026-07-26): P2 exterior angles @1.45e-3, all cells
+# Restores sigma points dropped by the full.yaml pruning so that
+# 'no knee' verdicts reflect physics, not a truncated sweep range.
+# Same seed_root/out_dir as full.yaml -> merges into data/full.
+out_dir: data/full
+n_seeds: 100
+seed_root: 20260712
+base: {a: 7078137.0, e: 0.001, i_deg: 98.0, duration_days: 30.0, dt: 60.0, truth: numerical,
+  truth_n_zonal: 4, filter_kind: ekf, u_max: 0.0002, ctrl_warmup_orbits: 2.0}
+grid:
+  controller: [lqr, mpc, impulsive]
+  filter_model: [kgd, gim_alfriend, ss]
+  meas:
+  - {meas_kind: angles, meas_sigma: 0.00145}
+  geometry:
+  - {family: along_track, size: 1000.0}
+  - {family: pco, size: 1000.0}
+  - {family: ei_safe, size: 1000.0}
