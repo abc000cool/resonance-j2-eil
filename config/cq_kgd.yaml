@@ -1,0 +1,19 @@
+# Corrected-Q demonstration (kgd: 1.0e-14 -> 3.162e-10, x3.2e4).
+# q_accel re-tuned by closed-loop NIS matching (scripts/tune_q_closedloop.py).
+# SEPARATE out_dir: different Q = different physics, must NOT mix into data/full.
+out_dir: data/corrected_q
+n_seeds: 100
+seed_root: 20260712
+base: {a: 7078137.0, e: 0.001, i_deg: 98.0, duration_days: 30.0, dt: 60.0, truth: numerical,
+  truth_n_zonal: 4, filter_kind: ekf, u_max: 0.0002, ctrl_warmup_orbits: 2.0, q_accel: 3.162e-10}
+grid:
+  controller: [lqr, mpc]
+  filter_model: [kgd]
+  meas:
+  - {meas_kind: cdgps, meas_sigma: 0.005}
+  - {meas_kind: cdgps, meas_sigma: 0.01}
+  - {meas_kind: cdgps, meas_sigma: 0.03}
+  - {meas_kind: cdgps, meas_sigma: 0.1}
+  - {meas_kind: cdgps, meas_sigma: 1.0}
+  geometry:
+  - {family: along_track, size: 1000.0}
