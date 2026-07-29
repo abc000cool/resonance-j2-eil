@@ -1,0 +1,3 @@
+controller,meas_kind,filter_model,family,n_sigma,n_infeasible,status,baseline_sigma,baseline_dv,knee_stable,knee_fit,knee_fit_extrapolated,knee_p05,knee_p10,knee_p25,knee_p50
+lqr,cdgps,kgd,along_track,5,0,flat,0.005,137.0289978905655,False,,False,0.03,0.1,inf,inf
+mpc,cdgps,kgd,along_track,5,0,falling,0.005,50.99537224736372,True,,False,inf,inf,inf,inf
