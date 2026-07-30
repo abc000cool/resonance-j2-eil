@@ -1,14 +1,81 @@
-\section{STM derivations}\label{app:stm}
-% Appendix A: CW closed form; S-S coefficients; KGD Eq. (A6) restated with
-% our symbol table; the numerically-linearized GA construction and its
-% first-order equivalence argument.
+\section{State definitions and STM implementations}\label{app:stm}
 
-\section{Filter equations}\label{app:filters}
-% Appendix B: ES-EKF prediction/Joseph update; UKF sigma-point scheme;
-% process-noise calibration procedure.
+All models propagate a six-dimensional relative state over one 60-s step.
+The CW STM is the classical closed form in LVLH Cartesian coordinates
+\cite{clohessy1960terminal}. The Schweighart--Sedwick plant uses the
+published LTI system \cite{schweighart2002highfidelity} with the
+$s$ and $c$ coefficient corrections of the accompanying thesis
+\cite{schweighart2001thesis}; the implementation
+(\texttt{eilj2/stm/schweighart.py}) is verified against direct integration
+of the S--S ODEs. The Gim--Alfriend STM is constructed as
+$\Phi(t,t_0) = A(t)\,\Sigma(t,t_0)\,B(t_0)$ \cite{gim2003state}, with
+$A = \partial x_{\mathrm{curv}} / \partial \delta e$,
+$B = A^{-1}$ evaluated at $t_0$, and $\Sigma$ the differential-element
+propagation including first-order $J_2$ secular terms; all three factors
+are obtained by numerical linearization (central differences) of the exact
+nonlinear maps about the chief (\texttt{eilj2/stm/gim\_alfriend.py}),
+which agrees with the closed form to first order in $J_2$ by construction
+and is verified against the numerical truth. The KGD STM implements
+Eq.~(A6) of Koenig et al. \cite{koenig2017stm} in the quasi-nonsingular
+ROE state
+$\delta\alpha = a\,(\delta a/a,\ \delta\lambda,\ \delta e_x,\ \delta e_y,
+\ \delta i_x,\ \delta i_y)$
+scaled to meters (\texttt{eilj2/stm/kgd.py}), cross-checked against a
+numerically computed secular Jacobian. Mean--osculating conversion uses the
+first-order Brouwer--Lyddane transformation in a nonsingular fixed-point
+inversion (\texttt{eilj2/brouwer.py}).
+
+\section{Filter equations and process-noise calibration}\label{app:filters}
+
+The error-state EKF propagates
+$\hat{x}_{k+1}^- = \Phi_k \hat{x}_k + G_k u_k$,
+$P_{k+1}^- = \Phi_k P_k \Phi_k^\top + Q_k$, where $G_k$ is the plant's
+discrete control-input matrix and $Q_k$ maps a white-acceleration PSD $q$
+into native coordinates over one step
+(\texttt{eilj2/filters/noise.py}). The update is in Joseph form,
+$P^+ = (I - KH)\,P^-\,(I - KH)^\top + K R K^\top$, with
+$K = P^- H^\top S^{-1}$ and innovation covariance
+$S = H P^- H^\top + R$. NIS is $\nu^\top S^{-1} \nu$ per update; NEES is
+$e^\top P^{-1} e$ per step against the truth in native coordinates. Both
+are verified to their $\chi^2$ expectations on linear systems in the test
+suite. The UKF variant uses standard scaled sigma points. Open-loop
+calibration (\texttt{scripts/calibrate\_q.py}) fits $q$ to one-step
+prediction residual velocity variance over three days; closed-loop
+NIS matching (\texttt{scripts/tune\_q\_closedloop.py}) bisects
+$\log_{10} q$ until median NIS over 30-day closed-loop trials matches
+$\dim z$, anchored at the tightest swept sigma where measurement noise
+cannot mask model error.
 
 \section{Measurement Jacobians}\label{app:jacobians}
-% Appendix C: CDGPS, range/range-rate, bearing Jacobians as implemented.
+
+With LVLH relative state $x = (r, v)$: CDGPS measures $r$ (optionally
+$(r,v)$), with $H = [\,I_3\ 0\,]$. RF ranging measures
+$\rho = \lVert r \rVert$ and
+$\dot\rho = r^\top v / \rho$, with
+$\partial\rho/\partial r = \hat{r}^\top$ and
+$\partial\dot\rho/\partial r = (v - \dot\rho\,\hat{r})^\top / \rho$,
+$\partial\dot\rho/\partial v = \hat{r}^\top$. Angles-only measures azimuth
+and elevation of $\hat{r}$ with the standard bearing Jacobians
+(\texttt{eilj2/measurements/angles\_only.py}). For element-native filters
+each $H$ is right-composed with the ROE$\to$LVLH Jacobian.
 
 \section{Reproducibility recipe}\label{app:repro}
-% Appendix D: uv/Docker/Snakemake commands; seeds; data DOI.
+
+\begin{verbatim}
+git clone https://github.com/abc000cool/resonance-j2-eil
+cd resonance-j2-eil
+uv sync --all-extras
+uv run pytest -q                  # verification suite
+# regenerate every figure/table in this paper from committed data:
+uv run python scripts/make_all.py --phase figures
+# rerun campaigns (screening ~ overnight, full tier ~ 5,000 core-hours):
+uv run python -m eilj2.campaign config/screening.yaml
+uv run python -m eilj2.campaign config/full.yaml
+uv run python scripts/find_knees.py data/full
+\end{verbatim}
+Trial seeds derive from
+\texttt{SeedSequence([20260712, crc32(point), trial])}; campaign outputs
+are per-point Parquet files, so interrupted campaigns resume and any
+single trial can be reproduced in isolation. A Docker image and CI
+configuration pin the environment; archived code and data are linked in
+the data-availability statement.

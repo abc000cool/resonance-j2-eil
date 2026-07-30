@@ -1,14 +1,5 @@
 \section{Introduction}\label{sec:intro}
 
-% OUTLINE (proposal Sec. 5.3 item 1):
-% - operational problem: differential J2 drift must be actively suppressed
-% - why nav-vs-control matters: u = -K x_hat couples estimator covariance to
-%   fuel cost; mission designers need to read off the delta-V consequence of
-%   the nav budget they can afford
-% - position against Koenig & D'Amico 2018 (five-item novelty list) and the
-%   2025 cislunar analog literature
-% - contributions and paper organization
-
 Formation-flying missions in low Earth orbit (LEO) --- PRISMA
 \cite{damico2012prisma}, TanDEM-X \cite{montenbruck2008tandemx}, GRACE-FO
 \cite{kornfeld2019gracefo}, NASA Starling \cite{kruger2025starling}, and the
@@ -30,7 +21,67 @@ including the modern quasi-nonsingular ROE STM
 actual filters running in the loop, not a static covariance; (iv) a Pareto
 \emph{surface} instead of a single trade curve; and (v) an explicit
 characterization of the regime where the certainty-equivalence assumption
-breaks down.
+breaks down. The same questions have recently been taken up for cislunar
+formations, where long-duration station-keeping strategies
+\cite{foss2025stationkeeping} and impulsive relative-motion control via
+reachable-set theory \cite{hunter2025cislunar} are being developed against
+far less certain dynamics; the LEO setting studied here has the advantage
+that the dominant perturbation is precisely known, so any closed-loop
+pathology that appears must be attributed to the estimation-and-control
+architecture rather than to dynamical ignorance.
 
-% TODO: paragraph on the cislunar analogs (Bandyopadhyay 2025, Hunter 2025)
-% TODO: contributions list + organization paragraph
+Running the estimator explicitly, rather than abstracting it, turned out to
+matter more than anticipated. When the extended Kalman filter's process
+noise is calibrated the way it usually is in practice --- by fitting a
+white-acceleration power spectral density to short-horizon, \emph{open-loop}
+propagation residuals --- the resulting filter is statistically
+inconsistent in the 30-day \emph{closed-loop} regime: overconfident by up
+to four orders of magnitude in normalized innovation squared (NIS) and,
+contrary to intuition, worst for the \emph{most accurate} dynamics model,
+which the calibration rewards with the smallest process noise. The
+practical consequence is not subtle: the apparent
+delta-V-versus-navigation-accuracy trade \emph{inverts} --- fuel cost
+appears to fall as sensors degrade --- and a mission designer reading such
+a curve would draw exactly the wrong conclusion. We diagnose the mechanism,
+show by direct experiment that it is the secular error of the analytic
+state-transition matrices rather than control feed-through, restore
+consistency by closed-loop covariance matching, and quantify what
+consistency costs in closed-loop performance.
+
+The contributions are:
+\begin{enumerate}
+  \item an open-source, exactly reproducible estimation-in-the-loop
+    simulation framework coupling three controllers, three relative-motion
+    STMs, three measurement architectures, and a numerical $J_2$--$J_4$
+    truth cross-validated against Orekit to millimeter-level relative
+    agreement (Sections~\ref{sec:models}--\ref{sec:method});
+  \item a two-tier Monte-Carlo campaign --- an STM-surrogate screening tier
+    (12{,}960 trials) whose per-cell delta-V medians rank-correlate at
+    $\rho = 0.83$ with the numerical-truth full tier (32{,}900 trials),
+    validating surrogate screening as a design practice
+    (Section~\ref{sec:method});
+  \item a controller--sensor \emph{reliability map}: divergence
+    probabilities and outright-infeasible pairings at realistic sensor
+    accuracies --- information that point-estimate trade studies do not
+    surface (Section~\ref{sec:results});
+  \item the filter-consistency result summarized above, including the
+    demonstration that a white-noise process model cannot represent the
+    secular STM error, and the quantitative case for bias-augmented
+    (Schmidt--Kalman) formulations in formation-keeping filters
+    (Section~\ref{sec:results});
+  \item navigation-accuracy knees measured with a threshold-robust metric
+    under a consistent filter, and the observation that controllers degrade
+    along different axes --- LQR pays for poor navigation in fuel, MPC in
+    accuracy (Sections~\ref{sec:results}--\ref{sec:discussion}).
+\end{enumerate}
+
+The paper is organized as follows. Section~\ref{sec:models} summarizes the
+relative-motion models and formation geometries and validates them against
+the numerical truth; Section~\ref{sec:nav} describes the measurement
+architectures and the error-state filter; Section~\ref{sec:controllers}
+the three controllers. Section~\ref{sec:method} covers the truth
+propagator and its cross-validation, the campaign design, and the robust
+knee metric. Section~\ref{sec:results} presents results in six blocks,
+from uncontrolled drift through the consistency analysis to the corrected
+trade curves. Section~\ref{sec:discussion} discusses actionability,
+limitations, and follow-on work; Section~\ref{sec:conclusion} concludes.

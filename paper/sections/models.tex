@@ -1,31 +1,95 @@
 \section{Relative-motion models}\label{sec:models}
 
-% OUTLINE (proposal Sec. 1.1-1.6, condensed to ~3 pages):
-% - LVLH frame and CW equations, closed-form STM
-% - J2 secular rates; differential drift as the operational problem
-% - Schweighart-Sedwick LTI plant (s, c coefficients, cross-track forcing)
-% - Gim-Alfriend geometric STM: A(t) Sigma(t,t0) B(t0) composition; our
-%   numerically-linearized implementation of the same construction
-% - Koenig-Guffanti-D'Amico qns ROE J2 STM (JGCD 2017 Eq. A6), state
-%   definition, and the ROE->RTN linear map
-% - geometry families: along-track, PCO, GERO, E/I-vector safe;
-%   J2-invariant conditions (Schaub-Alfriend 2001)
+This section summarizes the four analytic relative-motion models carried by
+the framework in increasing order of $J_2$ fidelity, and the formation
+geometry families swept in the campaign. Detailed state definitions and the
+implementation-level symbol table are collected in Appendix~\ref{app:stm};
+every model is verified in the accompanying test suite against both its
+defining differential equations and the numerical truth of
+Section~\ref{sec:method}.
 
 \subsection{LVLH frame and Clohessy--Wiltshire baseline}
-% TODO: condense proposal Sec. 1.1
 
-\subsection{J2 secular dynamics and differential drift}
-% TODO: condense proposal Sec. 1.2; cite Brouwer 1959
+The local-vertical/local-horizontal (LVLH) frame is centered on the chief
+with $x$ radial, $z$ along the orbit normal, and $y$ completing the triad
+(along-track for a circular orbit). For an unperturbed circular chief with
+mean motion $n$, the linearized relative dynamics are the
+Clohessy--Wiltshire (CW) equations \cite{clohessy1960terminal}, whose
+closed-form STM is the classical rendezvous baseline (the eccentric
+generalization is due to Tschauner and Hempel
+\cite{tschauner1965rendezvous}). CW carries no $J_2$ physics at all; it is
+retained as the zero-fidelity control case.
+
+\subsection{$J_2$ secular dynamics and differential drift}
+
+To first order, $J_2$ produces secular rates in the right ascension of the
+ascending node, argument of perigee, and mean anomaly
+\cite{brouwer1959solution,vallado2013fundamentals}. Two spacecraft with
+slightly different orbital elements experience slightly different rates,
+and the resulting \emph{differential} drift --- dominated by the
+along-track runaway from differential nodal and anomalistic rates --- is
+the operational problem formation-keeping must solve. Mean and osculating
+elements are related by the first-order Brouwer--Lyddane transformation
+\cite{brouwer1959solution,lyddane1963small}; all analytic models below
+propagate mean elements, and the framework converts to and from osculating
+states at the truth interface. For particular element combinations the
+differential secular rates cancel, giving the $J_2$-invariant conditions of
+Schaub and Alfriend \cite{schaub2001j2invariant}; general formations do not
+satisfy them, which is why active control is required.
 
 \subsection{Schweighart--Sedwick LTI plant}
-% TODO: equations with verified s, c, q, l coefficients
+
+Schweighart and Sedwick \cite{schweighart2002highfidelity,
+schweighart2001thesis} modify the CW system with constant coefficients
+that capture the orbit-averaged effect of $J_2$ on a circular reference
+orbit, yielding a linear time-invariant (LTI) plant with an analytically
+available STM and a small cross-track forcing term. Its LTI structure makes
+it the natural plant for the steady-state LQR of
+Section~\ref{sec:controllers}. The implementation reproduces the published
+coefficient set and is verified against direct integration of the
+Schweighart--Sedwick ODEs.
 
 \subsection{Gim--Alfriend geometric STM}
-% TODO: describe the numerically-linearized A Sigma B implementation and its
-% equivalence (to first order in J2) with the closed-form GA-STM
+
+The Gim--Alfriend STM \cite{gim2003state,gim2005equinoctial,
+alfriend2010formation} propagates the relative state to first order in
+$J_2$ including eccentricity, through the geometric composition
+$\Phi(t,t_0) = A(t)\,\Sigma(t,t_0)\,B(t_0)$, where $A$ and $B$ map between
+curvilinear relative coordinates and differential elements and $\Sigma$
+propagates the differential elements. Rather than transcribing the lengthy
+closed-form entries, the implementation constructs $A$, $\Sigma$, and $B$
+by numerical linearization of the exact nonlinear maps about the chief ---
+the same construction to first order, with the transcription risk traded
+for two extra digits of linearization error, verified to be equivalent to
+the closed form within first-order $J_2$ accuracy.
 
 \subsection{Quasi-nonsingular ROE and the KGD STM}
-% TODO: state definition, Eq. (A6) restated, drift structure
+
+The quasi-nonsingular relative orbital elements (ROE)
+\cite{damico2010thesis,damico2006proximity,sullivan2017survey} express the
+deputy state as scaled element differences --- relative semi-major axis,
+relative mean longitude, and the relative eccentricity and inclination
+vectors --- in which $J_2$ acts almost linearly and near-secularly.
+Koenig, Guffanti, and D'Amico \cite{koenig2017stm} derived closed-form
+$J_2$ STMs in these coordinates valid for arbitrary eccentricity (their
+Eq.~(A6) for the quasi-nonsingular set); this ``KGD'' STM is the
+highest-fidelity analytic model carried here, and the plant used by the MPC
+controller. Extensions incorporating differential drag and solar radiation
+pressure exist \cite{gaias2015drag,guffanti2019srp} but are outside the
+$J_2$-isolation scope of this study. The linear ROE$\to$LVLH map and its
+Jacobian, needed to fuse LVLH-frame measurements into ROE-native filters,
+follow D'Amico \cite{damico2010thesis}.
+
+\subsection{Formation geometry families}
+
+The campaign sweeps three (screening: four) standard 1-km-class geometry
+families (Fig.~\ref{fig:geometry}): pure along-track separation, the
+passively safe eccentricity/inclination-vector-separated geometry of
+D'Amico and Montenbruck \cite{damico2006proximity} (``E/I-safe''), a
+projected circular orbit (PCO), and, in the screening tier only, a general
+elliptical relative orbit (GERO); the screening data showed GERO's
+delta-V behavior to be strongly correlated with E/I-safe
+($\rho = 0.88$ across the grid), and it was pruned from the full tier.
 
 \begin{figure}[t]
   \centering
@@ -34,11 +98,24 @@
   \label{fig:geometry}
 \end{figure}
 
+\subsection{Model validation against the numerical truth}
+
+Figure~\ref{fig:validation} shows open-loop prediction error of each
+analytic model against the $J_2$--$J_4$ numerical truth over 30 days for a
+1-km E/I-safe formation. The ordering follows fidelity: CW and
+Schweighart--Sedwick accumulate kilometer-class error over the month, while the first-order-$J_2$ element-space models
+remain far below --- Gim--Alfriend near $100$~m and KGD at $17$--$26$~m.
+Two properties of this figure matter later: the errors of the element-space
+models are \emph{secular}, not random, growing monotonically with time; and
+a two-order-of-magnitude gap separates the best and worst models. Both
+facts return with consequences in the filter-consistency analysis of
+Section~\ref{sec:results}.
+
 \begin{figure}[t]
   \centering
   \genfig{fig2_validation}{0.95}{\texttt{python scripts/run\_validation.py}}
   \caption{Analytic-model prediction error against the $J_2$--$J_4$
   numerical truth over 30 days (per-orbit RMS, 1\,km E/I-safe formation).
-  Expected ordering: CW $\gg$ S--S $>$ GA $\approx$ KGD.}
+  Ordering: CW $\gg$ S--S $>$ GA $\approx$ KGD.}
   \label{fig:validation}
 \end{figure}

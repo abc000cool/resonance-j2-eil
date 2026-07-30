@@ -1,12 +1,25 @@
 \section{Relative navigation and error-state filtering}\label{sec:nav}
 
-% OUTLINE (proposal Sec. 1.8):
-% - measurement models: CDGPS (Table 1 accuracies), RF range(+rate),
-%   angles-only bearings; Woffinden dilemma and its J2/maneuver resolution
-% - error-state EKF, Joseph form; each analytic STM as prediction model
-% - UKF ablation (Merwe sigma points)
-% - process-noise calibration against truth residuals (scripts/calibrate_q.py)
-% - consistency verification: NEES/NIS
+\subsection{Measurement architectures}
+
+Three measurement architectures spanning the accuracy and cost range of
+flown relative-navigation systems are modeled (Table~\ref{tab:sensors}).
+\emph{Carrier-phase differential GPS} (CDGPS) provides three-dimensional
+relative position in the LVLH frame; flight systems have demonstrated
+millimeter-to-centimeter accuracy on PRISMA, TanDEM-X, and CanX-4/-5
+\cite{busse2003cdgps,kroes2006thesis,kroes2005precise,
+montenbruck2011tandemxnav,kahr2018canx}. \emph{Inter-satellite RF ranging}
+provides range and range-rate along the line of sight, the architecture
+flown on MMS \cite{roscoe2011mms}. \emph{Angles-only optical navigation}
+provides two bearing angles and no range; its weak observability --- the
+classical range-ambiguity dilemma formalized by Woffinden and Geller
+\cite{woffinden2009observability} --- is broken in practice by $J_2$ and by
+maneuvers \cite{damico2013argon,gaias2014anglesonly,sullivan2021nonlinear,
+willis2024polynomial}, both of which are present in the closed-loop
+scenarios studied here. Each architecture is swept over roughly two decades
+of $1\sigma$ accuracy bracketing its flown performance. Measurements are
+generated from the true relative state with additive white Gaussian noise
+at every filter step ($\Delta t = 60$~s).
 
 \begin{table}[t]
   \centering
@@ -23,5 +36,44 @@
   \end{tabular}
 \end{table}
 
-% TODO: ES-EKF equations (prediction/Joseph update), frame composition for
-% ROE-native filters, filter initialization and warm-up policy
+\subsection{Error-state extended Kalman filter}
+
+Navigation is performed by an error-state EKF whose prediction model is one
+of the three $J_2$-bearing analytic STMs of Section~\ref{sec:models}
+(S--S in LVLH coordinates; GA and KGD in their native element-difference
+coordinates, with the ROE$\to$LVLH Jacobian composing the measurement
+model). The covariance update uses the Joseph form for numerical symmetry,
+and control accelerations and impulses are fed through to the state
+prediction via the plant's discrete control-input matrix. Measurement
+Jacobians for the three architectures are given in
+Appendix~\ref{app:jacobians}, and the filter equations in
+Appendix~\ref{app:filters}. Filters are initialized from the true state
+perturbed consistently with the initial covariance, and the controller is
+inhibited for a two-orbit warm-up while the filter converges. An unscented
+(sigma-point) variant is implemented and verified for use as an ablation;
+all campaign results below use the EKF.
+
+\subsection{Process-noise calibration --- and a warning}
+
+The filter's process noise is a white-acceleration power spectral density
+$q$, mapped to the native state coordinates per step. Its value is
+calibrated per dynamics model in the conventional way: propagate the truth,
+collect one-step \emph{open-loop} prediction residuals of each STM over
+three days, and fit $q$ to the residual velocity variance
+(\texttt{scripts/calibrate\_q.py}). This yields
+$q \approx 5.5\times10^{-10}$, $8.3\times10^{-13}$, and
+$9.4\times10^{-15}\,(\mathrm{m/s^2})^2\,\mathrm{s}$ for S--S, GA, and KGD
+respectively (carried in the campaign configuration as $5.5\times10^{-10}$,
+$8.0\times10^{-13}$, and $1.0\times10^{-14}$) --- four orders of magnitude
+apart, tracking the fidelity ordering of Fig.~\ref{fig:validation}: the
+calibration hands the most accurate model the smallest process noise.
+
+Filter statistical consistency is monitored by the standard normalized
+innovation squared (NIS, expectation $\dim z$) and normalized estimation
+error squared (NEES, expectation $\dim x$), both verified on linear
+systems in the test suite. Section~\ref{sec:results} shows that the
+open-loop calibration above, despite being carried out exactly as
+intended, produces filters that are severely inconsistent in the closed
+loop --- and that this single implementation choice, easily hidden inside
+any estimation-in-the-loop study, qualitatively inverts the headline
+trade curve.

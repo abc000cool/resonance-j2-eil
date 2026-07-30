@@ -1,12 +1,70 @@
 \section{Discussion}\label{sec:discussion}
 
-% OUTLINE:
-% - actionability for mission designers (Starling-class swarms, VISORS-class
-%   precision formations): read the dv consequence off the nav budget
-% - the critical-inclination observation (drift maps + nav error)
-% - relation to covariance steering (Ridderhof-Tsiotras; Kumagai-Oguri) and
-%   differentiable-EKF policy learning as follow-on work
-% - limitations: J2-J4 only (no drag/SRP), near-circular chief in the
-%   campaign, first-order theories
+\paragraph{For mission designers.}
+Read directly, the corrected results give design guidance of the form the
+introduction promised. For a Starling-class swarm at kilometer separation
+\cite{kruger2025starling}, centimeter-class CDGPS saturates the LQR fuel
+benefit --- the knee sits at 3--10~cm, so investing in millimeter-class
+relative GPS buys no delta-V --- while a VISORS-class precision formation
+\cite{guffanti2023visors} is bounded not by the fuel knee but by the
+controller's accuracy floor (Fig.~\ref{fig:perfect}). The controller choice
+determines \emph{which currency} degrades with navigation: LQR holds
+accuracy and spends fuel; MPC holds fuel and spends accuracy; the
+closed-form impulsive scheme is the most failure-resistant of the three
+across the reliability map and the cheapest, at the cost of a
+$\sim$45~m error floor. And the reliability map itself is a design input:
+angles-only navigation at these formation scales frequently cannot close
+the loop at all with certainty-equivalent controllers, so an angles-only
+mission buys not just worse accuracy but a qualitatively different risk
+posture \cite{damico2013argon,gaias2014anglesonly}.
 
-% TODO
+\paragraph{For filter designers.}
+The consistency result generalizes beyond this simulation. The failure
+chain --- calibrate $Q$ against short-horizon open-loop residuals, deploy
+in a long-horizon closed loop, obtain an overconfident filter whose
+pathology is \emph{worst for the best dynamics model} --- involves no
+exotic ingredient; any estimation-in-the-loop trade study, and any flight
+filter tuned on propagation residuals, can walk into it. Three practical
+mitigations follow from the analysis. (1) Monitor NIS in the loop, not
+only in open-loop tuning; the inversion signature (cost falling as sensors
+degrade) is diagnostic. (2) If white-noise $Q$ must be used, match it in
+closed loop; but expect to pay in noise feed-through, and expect NEES to
+remain optimistic in the unobserved subspace --- a white process model
+cannot represent a secular error. (3) The principled fix is to give the
+secular residual a state: a Schmidt--Kalman / consider-covariance or
+bias-augmented formulation, or an empirically fitted higher-order
+prediction model of the kind proposed by Willis and D'Amico
+\cite{willis2024polynomial}. Quantifying how much of the consistency gap a
+one-per-axis bias state closes is the clearest follow-on experiment this
+framework enables.
+
+\paragraph{Relation to uncertainty-aware control.}
+Certainty equivalence is the baseline throughout, and its breakdown is
+visible both in the divergence statistics and in the noise feed-through
+cost of the consistent filter. The natural next step is control that
+consumes the covariance rather than ignoring it: the covariance-aware LQR
+variant implemented here (weight inflation, in the spirit of cautious
+control) is the minimal version, and covariance steering
+\cite{ridderhof2021covariance} and reachable-set-constrained impulsive
+planning \cite{chernick2021reachable,hunter2025cislunar} are the mature
+formulations. The framework's configured certainty-equivalence stress test
+(covariance-aware LQR at the loose-navigation corner,
+\texttt{config/ablation.yaml}) is deferred to follow-on work.
+
+\paragraph{Limitations.}
+The truth is $J_2$--$J_4$ zonal-only by design; differential drag and
+solar radiation pressure --- significant for low-altitude or
+high-area-ratio formations \cite{gaias2015drag,guffanti2019srp} --- are
+excluded so that model error is attributable, and including them would
+enlarge the secular residual the consistency analysis identifies rather
+than remove it. The campaign fixes a near-circular chief at
+$i = 98^\circ$, a single 1-km formation scale, and one tuning per
+controller; the perfect-state sweeps vary tightness but the
+estimation-in-the-loop grid does not. Measurement models are white and
+unbiased --- no multipath, integer-ambiguity, or attitude-coupling errors
+--- so the reliability map is, if anything, optimistic. The main results
+use the EKF; the implemented UKF ablation and the covariance-aware LQR
+stress test are configured but not part of the reported campaign. Finally,
+the analytic models are first-order in $J_2$; at 1-km scale the
+linearization error is subdominant to the secular $J_2$ residual, but both
+grow with formation size.

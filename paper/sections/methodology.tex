@@ -1,28 +1,95 @@
 \section{Simulation methodology}\label{sec:method}
 
-% OUTLINE (proposal Sec. 3):
-% - pure-Python numerical truth (J2-J4 zonals, DOP853 / verified RK4 fast
-%   path); design decision vs Basilisk and the Orekit cross-validation
-%   (Table 2 from scripts/crossvalidate_orekit.py)
-% - two-tier campaign: STM-surrogate screening (648 points x 20 seeds) ->
-%   numerical-truth full tier at the Pareto knees (N = 100)
-% - seeding (SeedSequence([root, point, trial])), Parquet outputs, resume
-% - reproducibility: uv-locked env, Docker, CI, Snakemake figure DAG, Zenodo
+\subsection{Numerical truth and cross-validation}
+
+The truth is a two-spacecraft Cartesian propagator with $J_2$--$J_4$ zonal
+gravity, integrated with DOP853 (a verified fixed-step RK4 fast path,
+agreeing to 3\,\textmu m relative position over an orbit, is used inside
+the Monte-Carlo campaign). A zonal-only field is deliberate: the study
+isolates the perturbation the analytic models claim to capture, so any
+closed-loop pathology is attributable to the
+estimation-and-control architecture rather than to unmodeled forces.
+
+The propagator is cross-validated against an independent oracle: an Orekit
+numerical propagator with a degree-4, order-0 gravity field, from identical
+initial conditions over the full 30-day campaign duration
+(Table~\ref{tab:orekit}). Relative position --- the quantity this study
+uses --- agrees to 2.3~mm RMS (6.9~mm maximum), five orders of magnitude
+below the formation scale. Absolute position agrees to 9.1~m RMS; the
+divergence is consistent with the $\sim$$10^{-9}$ relative difference
+between the two libraries' gravitational-constant conventions, growing
+quadratically in time, and is reported for completeness.
 
 \begin{table}[t]
   \centering
   \caption{Truth-propagator cross-validation against Orekit over 30 days
-  (fill from \texttt{scripts/crossvalidate\_orekit.py}).}
+  (\texttt{scripts/crossvalidate\_orekit.py}; 1\,km E/I-safe formation,
+  $i = 98^\circ$).}
   \label{tab:orekit}
   \begin{tabular}{lcc}
     \toprule
     & max [m] & RMS [m] \\
     \midrule
-    chief absolute position & TODO & TODO \\
-    deputy absolute position & TODO & TODO \\
-    relative position & TODO & TODO \\
+    chief absolute position & 19.518 & 9.136 \\
+    deputy absolute position & 19.519 & 9.137 \\
+    relative position & 0.0069 & 0.0023 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-% TODO
+\subsection{Scenario and campaign design}
+
+The baseline scenario is a near-circular chief at
+$a = 7078.137$~km ($\sim$700~km altitude), $e = 0.001$, $i = 98^\circ$,
+with 1-km formations, a 30-day duration, and a 60-s step for measurement,
+control, and filtering. A trial is declared \emph{diverged} when the
+formation-keeping error exceeds a bound of $100\times$ the formation size;
+diverged trials are excluded from delta-V statistics and tallied as
+failures.
+
+The campaign runs in two tiers. The \emph{screening} tier replaces the
+numerical truth with an STM-surrogate truth (KGD plus calibrated white
+acceleration) and sweeps the full grid --- 3 controllers $\times$ 3 filter
+models $\times$ 18 (architecture, $\sigma$) points $\times$ 4 geometries
+$=$ 648 points at 20 seeds each (12{,}960 trials) --- cheaply. The
+\emph{full} tier reruns the screening-informed grid (sigma points pruned to
+bracket the observed knees; the redundant GERO geometry dropped) against
+the numerical truth at $N = 100$ seeds: 324 grid points plus five
+extended-sigma backfill points, 32{,}900 trials. Agreement between tiers
+validates the surrogate: per-cell median delta-V rank-correlates at
+Spearman $\rho = 0.83$ with numerical-truth medians $7\%$ higher at the
+median (Pearson correlation is uninformative at 0.37 --- the delta-V
+distribution is heavy-tailed, and rank statistics are used throughout).
+
+Every trial is exactly reproducible: the RNG seed derives from
+\texttt{SeedSequence([root, point-hash, trial-index])}, so any single trial
+can be regenerated in isolation; results are written per grid point to
+Parquet, making campaigns resumable and incrementally extensible.
+
+\subsection{Knee metric}\label{sec:kneemetric}
+
+The navigation-accuracy ``knee'' --- the accuracy beyond which further
+sensor improvement no longer buys delta-V --- is reported with a metric
+designed after a naive version (first $\sigma$ whose median delta-V exceeds
+$1.1\times$ the tightest-sigma baseline) proved fragile on a coarse sigma
+grid, agreeing between tiers in only 55\% of cells. Per
+(controller, architecture, filter, geometry) cell the robust metric
+reports: a \emph{status} --- rising, flat, or falling, from the Spearman
+trend of median delta-V over feasible sigma points, where a sigma point is
+feasible if at least 10 of 100 seeds survive --- so that ``no knee'' is
+distinguishable from ``trend inverted'' and ``all trials diverged'';
+threshold knees at 5/10/25/50\% delta-V rise with a stability flag (the
+verdict is \emph{stable} when the 5\% and 50\% knees agree within one grid
+step); and a fitted knee from
+$\Delta V(\sigma) = \Delta V_0\,(1 + (\sigma/\sigma_k)^p)$, flagged when it
+extrapolates beyond the swept range. Infeasible sigma points are marked
+explicitly in every figure rather than silently omitted.
+
+\subsection{Reproducibility}
+
+The implementation is pure Python (NumPy/SciPy/CasADi), with a locked
+dependency environment (\texttt{uv}), a Docker fallback, continuous
+integration running the full verification suite, and a figure DAG that
+regenerates every figure and table in this paper from the committed
+Parquet data with one command. Code and data are openly released; the
+archived version of record is linked in the data-availability statement.
