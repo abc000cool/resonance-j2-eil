@@ -1,13 +1,49 @@
 \section{Formation-keeping controllers}\label{sec:controllers}
 
-% OUTLINE (proposal Sec. 1.7):
-% - LQR on the S-S plant (CARE, ZOH accel, saturation model)
-% - receding-horizon MPC on the KGD plant (per-orbit impulses, CasADi/IPOPT)
-% - closed-form impulsive Chernick-D'Amico: pseudo-state targeting,
-%   out-of-plane single impulse with J2-refined location, in-plane
-%   triple-tangential at J2-shifted optimal phases
-% - the closed-loop coupling u = u(x_hat): certainty equivalence and the
-%   covariance-aware LQR variant used in the stress test
-% - delta-V accounting conventions
+Three controllers spanning the design space flown or proposed for LEO
+formations are implemented. All three act on the \emph{estimated} state
+$\hat{x}$; none receives the truth.
 
-% TODO
+\paragraph{Continuous LQR.}
+A steady-state linear-quadratic regulator on the Schweighart--Sedwick LTI
+plant, with gain from the continuous algebraic Riccati equation, applied as
+a zero-order-hold acceleration over each 60-s step and saturated
+componentwise at $u_{\max} = 2\times10^{-4}\,\mathrm{m/s^2}$. The
+state-weight-to-control-weight ratio sets the control tightness swept in
+the perfect-navigation Pareto (Fig.~\ref{fig:perfect}); the campaign uses a
+fixed mid-range weighting. A covariance-aware variant, which inflates the
+state weight by the filter covariance to soften control action on uncertain
+estimates, is implemented for the certainty-equivalence stress test
+(Section~\ref{sec:discussion}).
+
+\paragraph{Receding-horizon MPC.}
+A model-predictive controller on the KGD ROE plant: at each planning epoch
+(once per orbit) it solves a direct transcription over a multi-orbit
+horizon --- impulsive velocity increments at fixed per-orbit locations,
+quadratic state and delta-V costs, and the saturation bound as a hard
+constraint --- using CasADi/IPOPT, and executes the first orbit of the
+plan. Planning in ROE space exploits the near-linearity of $J_2$ in these
+coordinates \cite{koenig2017stm}.
+
+\paragraph{Closed-form impulsive (Chernick--D'Amico).}
+The analytic impulsive scheme of Chernick and D'Amico
+\cite{chernick2018closedform,chernick2021reachable}, with pseudo-state
+targeting: a single out-of-plane impulse at the $J_2$-refined optimal
+argument of latitude corrects the relative inclination vector, and an
+in-plane triple-tangential sequence at $J_2$-shifted phases corrects the
+remaining elements \cite{gaias2015impulsive,vaddi2005formation}. Plans are
+regenerated once per orbit after the previous maneuver sequence completes.
+Being deadband-style and analytic, it is the cheapest and loosest of the
+three.
+
+\paragraph{Certainty equivalence and delta-V accounting.}
+All controllers are certainty-equivalent by construction: $u = u(\hat{x})$,
+with the filter covariance entering only the covariance-aware LQR variant.
+The estimation error $\hat{x} - x$ therefore acts as an unmodeled input
+disturbance whose statistics are set by the navigation architecture --- the
+coupling this paper quantifies. Delta-V is accounted as
+$\sum \lVert u \rVert \Delta t$ for continuous control plus
+$\sum \lVert \Delta v \rVert$ for impulses, annualized by the simulated
+duration; trials whose formation-keeping error exceeds a divergence bound
+(Section~\ref{sec:method}) are excluded from delta-V statistics and
+reported separately as failures.

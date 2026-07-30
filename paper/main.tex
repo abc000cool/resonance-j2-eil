@@ -21,36 +21,49 @@
 
 \title{Estimation-in-the-loop J2 formation-keeping: a Pareto
 characterization of relative-navigation accuracy versus delta-V cost}
-\author{The Resonance Foundation\thanks{administrator@theresonancefoundation.org}}
+\author{Ansh Pathak\thanks{Independent researcher; pathakansh10@gmail.com}}
 \date{\today}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Spacecraft formation-flying missions in low Earth orbit must actively
-suppress the differential drift induced by the $J_2$ zonal harmonic, and the
-delta-V cost of doing so depends jointly on the controller design, the
-fidelity of the relative-motion model, and, critically, on the accuracy of
-the on-board relative navigation filter. Prior work --- most notably Koenig
-\& D'Amico~\cite{koenig2018tradeoffs} --- has characterized this trade in a
-linear time-invariant, near-circular, LQR-only setting with the estimator
-represented as a static covariance floor. We extend that analysis to a
-controller-and-plant-conditional Pareto surface using modern
-quasi-nonsingular relative orbital element state transition matrices. We
-implement three controllers (steady-state LQR on the Schweighart--Sedwick
-plant; receding-horizon MPC on the Koenig--Guffanti--D'Amico ROE STM;
-closed-form impulsive Chernick--D'Amico) and three relative-navigation
-architectures (carrier-phase differential GPS, inter-satellite RF range,
-angles-only optical) coupled through a Joseph-form error-state extended
-Kalman filter, and drive the closed loop against a numerical $J_2$--$J_4$
-truth propagator cross-validated by Orekit. Across a Monte-Carlo campaign
-spanning inclination, formation size, and nav-accuracy sweeps, we
-characterize the delta-V-versus-navigation-accuracy Pareto surface for each
-controller, identify the certainty-equivalence-breakdown regime, and
-quantify the fidelity trade between spending margin on nav accuracy versus
-on plant model. The paper is accompanied by a fully reproducible open-source
-implementation (MIT license).
+Formation-flying spacecraft in low Earth orbit must actively suppress the
+differential drift induced by the $J_2$ zonal harmonic, and the delta-V cost
+of doing so depends jointly on the controller, the relative-motion model
+used for prediction, and the accuracy of the on-board relative navigation
+filter. Prior systematic treatments --- most notably Koenig \&
+D'Amico~\cite{koenig2018tradeoffs} --- characterize this trade in a linear
+time-invariant, LQR-only setting with the estimator abstracted as a static
+covariance floor. We extend that analysis to a controller- and
+plant-conditional characterization with \emph{actual filters running in the
+loop}: three controllers (LQR, receding-horizon MPC, closed-form impulsive
+Chernick--D'Amico), three relative-motion state-transition matrices
+(Schweighart--Sedwick, Gim--Alfriend, Koenig--Guffanti--D'Amico), and three
+measurement architectures (carrier-phase differential GPS, inter-satellite
+RF ranging, angles-only optical) coupled through a Joseph-form error-state
+EKF and driven against a numerical $J_2$--$J_4$ truth cross-validated
+against Orekit to millimeter relative agreement. A two-tier Monte-Carlo
+campaign (12{,}960 screening trials; 32{,}900 numerical-truth trials)
+yields three principal results. First, a reliability map: closed-loop
+divergence is common at realistic sensor accuracies (16--22\% of all
+trials), concentrates in angles-only navigation, and renders some
+controller--sensor pairings infeasible outright. Second, a
+filter-consistency result with methodological consequences: process noise
+calibrated the standard way --- against open-loop propagation residuals ---
+leaves the filter overconfident by up to four orders of magnitude in
+normalized innovation squared, \emph{inverting} the apparent
+delta-V-versus-accuracy trade; the effect is worst for the most accurate
+dynamics model, and consistency restored by closed-loop covariance matching
+recovers the physically expected trade at the cost of noise feed-through.
+The residual error is secular, so no white-noise process model can
+represent it faithfully --- a quantitative argument for bias-augmented
+(Schmidt--Kalman) formulations in formation-keeping filters. Third, with a
+consistent filter the navigation-accuracy ``knee'' becomes measurable: for
+LQR under CDGPS it sits at the 3--10~cm level, and controllers respond to
+degraded navigation differently --- LQR pays in fuel, MPC holds fuel
+constant and pays in accuracy. All software, data, and figures are openly
+released and exactly reproducible.
 \end{abstract}
 
 \input{sections/intro}
