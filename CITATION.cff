@@ -12,7 +12,8 @@ authors:
 license: MIT
 repository-code: "https://github.com/abc000cool/resonance-j2-eil"
 url: "https://when-the-filter-lies.vercel.app"
-doi: 10.5281/zenodo.21696854
+# concept DOI: always resolves to the newest release, so it never goes stale
+doi: 10.5281/zenodo.21696853
 abstract: >-
   Open-source reference implementation, Monte-Carlo campaign data, and manuscript
   for "Estimation-in-the-loop J2 formation-keeping: a Pareto characterization of
