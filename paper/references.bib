@@ -1,6 +1,7 @@
 % Anchor references for the estimation-in-the-loop J2 formation-keeping paper.
-% Page numbers verified where possible; entries marked TODO-verify should be
-% checked against the publisher record before submission.
+% All entries verified against Crossref / doi.org / the arXiv API on
+% 2026-07-29 (five former TODO-verify entries corrected; two had wrong
+% author lists and three had wrong or provisional titles/pages).
 
 % ---------- the paper we extend ----------
 @article{koenig2018tradeoffs,
@@ -230,10 +231,10 @@
 }
 @article{willis2024polynomial,
   author  = {Willis, Matthew and D'Amico, Simone},
-  title   = {Polynomial Dynamics Models for Improved Filtering of Spacecraft Relative Motion},
+  title   = {Fast Angles-Only Relative Navigation Using Polynomial Dynamics},
   journal = {Advances in Space Research},
-  year    = {2024},
-  note    = {TODO-verify volume/pages}
+  volume  = {73}, number = {11}, pages = {5484--5500}, year = {2024},
+  doi     = {10.1016/j.asr.2023.07.043}
 }
 
 % ---------- mission heritage ----------
@@ -272,12 +273,12 @@
   volume  = {34}, number = {4}, pages = {1070--1080}, year = {2011},
   doi     = {10.2514/1.52484}
 }
-@article{kruger2025starling,
-  author  = {Kruger, Justin and Koenig, Adam W. and D'Amico, Simone},
-  title   = {Starling Formation-Flying Optical Experiment: Initial Operations and Flight Results},
-  journal = {Journal of Guidance, Control, and Dynamics},
-  year    = {2025},
-  note    = {TODO-verify volume/pages}
+@inproceedings{kruger2025starling,
+  author    = {Kruger, Justin and D'Amico, Simone},
+  title     = {On-Orbit Performance and Lessons Learned for Autonomous Angles-Only Navigation of a Satellite Swarm},
+  booktitle = {2025 IEEE Aerospace Conference},
+  pages     = {1--20}, year = {2025},
+  doi       = {10.1109/AERO63441.2025.11068739}
 }
 @article{kahr2018canx,
   author  = {Kahr, Erin and Roth, Niels and Montenbruck, Oliver and Risi, Ben and Zee, Robert E.},
@@ -295,21 +296,20 @@
 }
 
 % ---------- cislunar analogs and adjacent methods ----------
-@misc{bandyopadhyay2025stationkeeping,
-  author = {Bandyopadhyay, Saptarshi and others},
-  title  = {Long-Duration Station-Keeping Strategy for Satellite Formations in Cislunar Space},
-  year   = {2025}, note = {arXiv:2507.19620. TODO-verify author list}
+@misc{foss2025stationkeeping,
+  author = {Foss, Ethan and Takubo, Yuji and D'Amico, Simone},
+  title  = {Long-Duration Station-Keeping Strategy for Cislunar Spacecraft Formations},
+  year   = {2025}, note = {arXiv:2507.19620}
 }
 @misc{hunter2025cislunar,
-  author = {Hunter, Blake and Manuel, Miguel and D'Amico, Simone},
-  title  = {Reachable-Set-Based Model Predictive Control for Cislunar Formation Flying},
-  year   = {2025}, note = {arXiv:2507.21425. TODO-verify title/author list}
+  author = {Hunter, Matthew and Manuel, Walter J. and D'Amico, Simone},
+  title  = {Optimal Impulsive Control of Cislunar Relative Motion Using Reachable Set Theory},
+  year   = {2025}, note = {arXiv:2507.21425}
 }
 @article{ridderhof2021covariance,
   author  = {Ridderhof, Jack and Tsiotras, Panagiotis},
-  title   = {Minimum-Fuel Powered Descent in the Presence of Random Disturbances},
+  title   = {Minimum-Fuel Closed-Loop Powered Descent Guidance with Stochastically Derived Throttle Margins},
   journal = {Journal of Guidance, Control, and Dynamics},
-  volume  = {44}, number = {3}, year = {2021},
-  note    = {TODO-verify pages},
+  volume  = {44}, number = {3}, pages = {537--547}, year = {2021},
   doi     = {10.2514/1.G005400}
 }
