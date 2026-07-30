@@ -75,6 +75,18 @@ released and exactly reproducible.
 \input{sections/discussion}
 \input{sections/conclusion}
 
+\section*{Data and code availability}
+All software, campaign data, and figure-generation scripts are openly available.
+The development repository is at
+\url{https://github.com/abc000cool/resonance-j2-eil}, and the archived version of
+record for this manuscript --- source, the full 45{,}860-trial campaign as
+per-grid-point Parquet files, and this PDF --- is deposited at
+\href{https://doi.org/10.5281/zenodo.21696854}{doi:10.5281/zenodo.21696854}.
+Every figure and table regenerates from the archived data with
+\texttt{python scripts/make\_all.py --phase figures}; every Monte-Carlo trial is
+reproducible in isolation from its recorded seed. An interactive summary of the
+study is at \url{https://when-the-filter-lies.vercel.app}.
+
 \bibliographystyle{unsrtnat}
 \bibliography{references}
 

@@ -1,31 +1,42 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+message: "If you use this software or its data, please cite it as below."
 title: "eilj2: estimation-in-the-loop J2 formation-keeping"
 type: software
+version: v0.1.0
+date-released: 2026-07-29
 authors:
-  - name: "The Resonance Foundation"
-    email: administrator@theresonancefoundation.org
+  - family-names: Pathak
+    given-names: Ansh
+    email: pathakansh10@gmail.com
+    affiliation: "Independent researcher"
 license: MIT
-repository-code: "https://github.com/theresonancefoundation/resonance-j2-eil"
+repository-code: "https://github.com/abc000cool/resonance-j2-eil"
+url: "https://when-the-filter-lies.vercel.app"
+doi: 10.5281/zenodo.21696854
 abstract: >-
-  Open-source reference implementation for the preprint
-  "Estimation-in-the-loop J2 formation-keeping: a Pareto characterization of
+  Open-source reference implementation, Monte-Carlo campaign data, and manuscript
+  for "Estimation-in-the-loop J2 formation-keeping: a Pareto characterization of
   relative-navigation accuracy versus delta-V cost": analytic relative-motion
   STMs (CW, Schweighart-Sedwick, Gim-Alfriend, Koenig-Guffanti-D'Amico),
   error-state EKF/UKF relative navigation, LQR/MPC/impulsive formation-keeping
-  controllers, a J2-J4 numerical truth propagator, and a tiered Monte-Carlo
-  campaign driver.
+  controllers, a J2-J4 numerical truth propagator cross-validated against Orekit,
+  and a tiered Monte-Carlo campaign driver with deterministic seeding.
 keywords:
   - spacecraft formation flying
   - relative navigation
   - Kalman filtering
+  - filter consistency
   - J2 perturbation
+  - formation keeping
+  - reproducible research
 preferred-citation:
   type: article
   title: >-
     Estimation-in-the-loop J2 formation-keeping: a Pareto characterization of
     relative-navigation accuracy versus delta-V cost
   authors:
-    - name: "The Resonance Foundation"
+    - family-names: Pathak
+      given-names: Ansh
+      affiliation: "Independent researcher"
   year: 2026
-  notes: "arXiv preprint; update identifier after submission"
+  notes: "Preprint; update with the arXiv identifier after submission"
