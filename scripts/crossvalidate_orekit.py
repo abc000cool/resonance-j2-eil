@@ -114,6 +114,19 @@ def main() -> None:
     print(f"  deputy  abs pos: max {dd.max():8.3f} m   rms {np.sqrt((dd**2).mean()):8.3f} m")
     print(f"  relative   pos:  max {dr.max():8.4f} m   rms {np.sqrt((dr**2).mean()):8.4f} m")
 
+    import pandas as pd
+    out = Path("data/validation/orekit_crossval.csv")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame([
+        {"quantity": "chief_abs_pos", "max_m": dc.max(),
+         "rms_m": float(np.sqrt((dc**2).mean()))},
+        {"quantity": "deputy_abs_pos", "max_m": dd.max(),
+         "rms_m": float(np.sqrt((dd**2).mean()))},
+        {"quantity": "relative_pos", "max_m": dr.max(),
+         "rms_m": float(np.sqrt((dr**2).mean()))},
+    ]).assign(days=args.days, step_s=args.step).to_csv(out, index=False)
+    print(f"[orekit] wrote {out}")
+
 
 if __name__ == "__main__":
     main()
