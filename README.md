@@ -151,9 +151,19 @@ Snakefile        figure DAG (Linux/macOS); scripts/make_all.py mirrors it
 - CI (`.github/workflows/ci.yml`): 3.11–3.13 × Linux/macOS/Windows, fast +
   slow tests, an end-to-end mini campaign, and a figure smoke test.
 - `Dockerfile` for a hardened Linux build.
-- Publishing: push to GitHub → enable Zenodo integration → tag
-  `arxiv-submission-v1` (mints the DOI) → update `CITATION.cff` with the DOI
-  → submit `paper/` to arXiv with the code/data DOI in the abstract.
+- Archived release: **v0.1.0 → [10.5281/zenodo.21696854](https://doi.org/10.5281/zenodo.21696854)**
+  (source, the full 45,860-trial campaign as Parquet, and the manuscript PDF).
+  Remaining publishing step: submit `paper/` to arXiv citing that DOI.
+
+## Citing
+
+If you use this software or its data, please cite the archived release
+(machine-readable metadata in `CITATION.cff`):
+
+> Pathak, A. (2026). *eilj2: estimation-in-the-loop J2 formation-keeping* (v0.1.0)
+> [Software and dataset]. Zenodo. https://doi.org/10.5281/zenodo.21696854
+
+An interactive summary of the study: <https://when-the-filter-lies.vercel.app>
 
 ## License
 
