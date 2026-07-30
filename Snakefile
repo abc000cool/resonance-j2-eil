@@ -11,7 +11,7 @@ rule all:
     input: f"{FIGDIR}/fig1_geometry.pdf", f"{FIGDIR}/fig2_validation.pdf", \
            f"{FIGDIR}/fig3_drift_rates.pdf", f"{FIGDIR}/fig4_drift_contour.pdf", \
            f"{FIGDIR}/fig5_perfect_pareto.pdf", f"{FIGDIR}/fig6_dv_vs_sigma.pdf", \
-           f"{FIGDIR}/fig7_pareto_surface.pdf", f"{FIGDIR}/fig8_ablation.pdf"
+           f"{FIGDIR}/fig7_pareto_surface.pdf", f"{FIGDIR}/fig9_qtuning.pdf"
 
 rule figures:
     input: rules.all.input
@@ -60,21 +60,26 @@ rule fig4:
     shell: "python -m eilj2.figures.fig4_drift_contour"
 
 rule fig5:
-    input: "data/perfect_state/pareto_stm.parquet"
+    input: "data/perfect_state/pareto_numerical.parquet"
     output: f"{FIGDIR}/fig5_perfect_pareto.pdf"
     shell: "python -m eilj2.figures.fig5_perfect_pareto"
 
 rule fig6:
-    input: "data/screening"
+    input: "data/full"
     output: f"{FIGDIR}/fig6_dv_vs_sigma.pdf"
     shell: "python -m eilj2.figures.fig6_dv_vs_sigma"
 
 rule fig7:
-    input: "data/screening"
+    input: "data/full"
     output: f"{FIGDIR}/fig7_pareto_surface.pdf"
     shell: "python -m eilj2.figures.fig7_pareto_surface"
 
-rule fig8:
-    input: "data/ablation"
-    output: f"{FIGDIR}/fig8_ablation.pdf"
-    shell: "python -m eilj2.figures.fig8_ablation"
+rule fig9:
+    input: "data/full", "data/corrected_q"
+    output: f"{FIGDIR}/fig9_qtuning.pdf"
+    shell: "python -m eilj2.figures.fig9_qtuning"
+
+rule table3:
+    input: "data/full"
+    output: "data/full/knees.csv"
+    shell: "python scripts/find_knees.py data/full"

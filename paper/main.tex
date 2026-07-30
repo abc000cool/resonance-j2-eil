@@ -46,12 +46,12 @@ EKF and driven against a numerical $J_2$--$J_4$ truth cross-validated
 against Orekit to millimeter relative agreement. A two-tier Monte-Carlo
 campaign (12{,}960 screening trials; 32{,}900 numerical-truth trials)
 yields three principal results. First, a reliability map: closed-loop
-divergence is common at realistic sensor accuracies (16--22\% of all
-trials), concentrates in angles-only navigation, and renders some
-controller--sensor pairings infeasible outright. Second, a
+divergence is common at realistic sensor accuracies (16--22\% of trials
+depending on the controller), concentrates in angles-only navigation, and
+renders some controller--sensor pairings infeasible outright. Second, a
 filter-consistency result with methodological consequences: process noise
 calibrated the standard way --- against open-loop propagation residuals ---
-leaves the filter overconfident by up to four orders of magnitude in
+leaves the filter overconfident by more than three orders of magnitude in
 normalized innovation squared, \emph{inverting} the apparent
 delta-V-versus-accuracy trade; the effect is worst for the most accurate
 dynamics model, and consistency restored by closed-loop covariance matching
@@ -60,7 +60,8 @@ The residual error is secular, so no white-noise process model can
 represent it faithfully --- a quantitative argument for bias-augmented
 (Schmidt--Kalman) formulations in formation-keeping filters. Third, with a
 consistent filter the navigation-accuracy ``knee'' becomes measurable: for
-LQR under CDGPS it sits at the 3--10~cm level, and controllers respond to
+LQR under CDGPS it sits at the 3--10~cm level, so centimetre-class relative
+GPS saturates the fuel benefit, and controllers respond to
 degraded navigation differently --- LQR pays in fuel, MPC holds fuel
 constant and pays in accuracy. All software, data, and figures are openly
 released and exactly reproducible.
@@ -78,12 +79,17 @@ released and exactly reproducible.
 \section*{Data and code availability}
 All software, campaign data, and figure-generation scripts are openly available.
 The development repository is at
-\url{https://github.com/abc000cool/resonance-j2-eil}, and the archived version of
-record for this manuscript --- source, the full 45{,}860-trial campaign as
-per-grid-point Parquet files, and this PDF --- is deposited at
-\href{https://doi.org/10.5281/zenodo.21696854}{doi:10.5281/zenodo.21696854}.
-Every figure and table regenerates from the archived data with
-\texttt{python scripts/make\_all.py --phase figures}; every Monte-Carlo trial is
+\url{https://github.com/abc000cool/resonance-j2-eil}, and the archive of
+record --- source, the full 45{,}860-trial campaign as per-grid-point Parquet
+files, and this PDF --- is deposited at
+\href{https://doi.org/10.5281/zenodo.21696853}{doi:10.5281/zenodo.21696853},
+a version-independent identifier that always resolves to the newest release
+(v0.1.1 accompanies this manuscript).
+Every figure regenerates from the archived data with
+\texttt{python scripts/make\_all.py --phase figures} (equivalently
+\texttt{snakemake -c8 figures}), the knee table with
+\texttt{scripts/find\_knees.py}, and the cross-validation table with
+\texttt{scripts/crossvalidate\_orekit.py}; every Monte-Carlo trial is
 reproducible in isolation from its recorded seed. An interactive summary of the
 study is at \url{https://when-the-filter-lies.vercel.app}.
 

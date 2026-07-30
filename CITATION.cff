@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this software or its data, please cite it as below."
 title: "eilj2: estimation-in-the-loop J2 formation-keeping"
 type: software
-version: v0.1.0
-date-released: 2026-07-29
+version: v0.1.1
+date-released: 2026-07-30
 authors:
   - family-names: Pathak
     given-names: Ansh

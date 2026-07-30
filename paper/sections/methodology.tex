@@ -15,10 +15,15 @@ numerical propagator with a degree-4, order-0 gravity field, from identical
 initial conditions over the full 30-day campaign duration
 (Table~\ref{tab:orekit}). Relative position --- the quantity this study
 uses --- agrees to 2.3~mm RMS (6.9~mm maximum), five orders of magnitude
-below the formation scale. Absolute position agrees to 9.1~m RMS; the
-divergence is consistent with the $\sim$$10^{-9}$ relative difference
-between the two libraries' gravitational-constant conventions, growing
-quadratically in time, and is reported for completeness.
+below the formation scale. Absolute position agrees to 9.1~m RMS. That
+residual is consistent with
+the $\sim$$10^{-9}$ relative difference between the two libraries'
+gravitational-constant conventions: a fractional error $\epsilon$ in $\mu$
+offsets the mean motion by $\epsilon/2$, giving an along-track separation
+growing \emph{linearly} as $a n (\epsilon/2) t \approx 10$~m over 30 days
+at this altitude --- the magnitude observed. It is reported for
+completeness; the relative state that this study actually uses is
+unaffected at the millimetre level.
 
 \begin{table}[t]
   \centering
@@ -89,7 +94,10 @@ explicitly in every figure rather than silently omitted.
 
 The implementation is pure Python (NumPy/SciPy/CasADi), with a locked
 dependency environment (\texttt{uv}), a Docker fallback, continuous
-integration running the full verification suite, and a figure DAG that
-regenerates every figure and table in this paper from the committed
-Parquet data with one command. Code and data are openly released; the
-archived version of record is linked in the data-availability statement.
+integration running the full verification suite, and a Snakemake DAG that
+regenerates every figure in this paper from the committed Parquet data with
+one command (\texttt{snakemake -c8 figures}; the knee table follows from
+\texttt{scripts/find\_knees.py}, and Table~\ref{tab:orekit} from the
+Orekit cross-validation script, which additionally needs a JVM). Code and
+data are openly released; the archived version of record is linked in the
+data-availability statement.

@@ -16,7 +16,7 @@ from . import common
 
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--data", default=str(common.REPO / "data" / "screening"))
+    ap.add_argument("--data", default=str(common.REPO / "data" / "full"))
     ap.add_argument("--family", default="ei_safe")
     ap.add_argument("--filter-model", default="kgd")
     args = ap.parse_args(argv)
