@@ -11,17 +11,19 @@ navigation filter, so the achievable delta-V budget is a joint function of
 the navigation accuracy, the controller family, and the fidelity of the
 relative-motion model used for prediction.
 
-The single most-cited systematic treatment of this coupling, Koenig \&
-D'Amico \cite{koenig2018tradeoffs}, characterizes the trade in an LTI,
+The most directly comparable systematic treatment of this coupling,
+Koenig \& D'Amico \cite{koenig2018tradeoffs}, characterizes the trade in an
+LTI,
 near-circular, LQR-only setting with the estimator abstracted as a static
 covariance floor. This paper extends that analysis along five axes:
 (i) three controllers instead of one; (ii) three relative-motion STMs
 including the modern quasi-nonsingular ROE STM
 \cite{koenig2017stm}; (iii) three realistic measurement architectures with
 actual filters running in the loop, not a static covariance; (iv) a Pareto
-\emph{surface} instead of a single trade curve; and (v) an explicit
-characterization of the regime where the certainty-equivalence assumption
-breaks down. The same questions have recently been taken up for cislunar
+\emph{surface} instead of a single trade curve; and (v) divergence
+statistics that locate where certainty-equivalent control fails outright,
+instead of assuming throughout that it holds. The same questions have
+recently been taken up for cislunar
 formations, where long-duration station-keeping strategies
 \cite{foss2025stationkeeping} and impulsive relative-motion control via
 reachable-set theory \cite{hunter2025cislunar} are being developed against
@@ -35,8 +37,8 @@ matter more than anticipated. When the extended Kalman filter's process
 noise is calibrated the way it usually is in practice --- by fitting a
 white-acceleration power spectral density to short-horizon, \emph{open-loop}
 propagation residuals --- the resulting filter is statistically
-inconsistent in the 30-day \emph{closed-loop} regime: overconfident by up
-to four orders of magnitude in normalized innovation squared (NIS) and,
+inconsistent in the 30-day \emph{closed-loop} regime: overconfident by more
+than three orders of magnitude in normalized innovation squared (NIS) and,
 contrary to intuition, worst for the \emph{most accurate} dynamics model,
 which the calibration rewards with the smallest process noise. The
 practical consequence is not subtle: the apparent

@@ -16,8 +16,8 @@ The study's central finding, however, is the one it did not set out to
 produce. Running the estimator explicitly exposed a failure chain that the
 covariance-floor abstraction structurally cannot see: process noise
 calibrated against open-loop propagation residuals leaves the closed-loop
-filter overconfident by up to four orders of magnitude in NIS, worst for
-the most accurate dynamics model, and the resulting trade curves are not
+filter overconfident by more than three orders of magnitude in NIS, worst
+for the most accurate dynamics model, and the resulting trade curves are not
 merely noisy but \emph{inverted} --- fuel cost appearing to fall as sensors
 degrade. Restoring consistency by closed-loop covariance matching recovers
 the physically expected trades and reveals a clean controller distinction
@@ -28,9 +28,9 @@ The constructive implication is a bias-augmented (Schmidt--Kalman) filter
 formulation, which this framework is positioned to evaluate next, alongside
 the configured certainty-equivalence stress test.
 
-Every number, figure, and table in this paper regenerates from the released
-code and data with one command; the campaign is seeded for exact
-reproducibility down to the individual trial. We hope the framework serves
+Every figure in this paper regenerates from the released code and data with
+one command, the tables from two named scripts, and the campaign is seeded
+for exact reproducibility down to the individual trial. We hope the framework serves
 both as a design tool --- reading delta-V consequences off a navigation
 budget --- and as a cautionary, fully inspectable example of how easily an
 estimation-in-the-loop study can be silently corrupted by its filter

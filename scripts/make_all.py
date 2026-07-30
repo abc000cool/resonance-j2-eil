@@ -50,7 +50,7 @@ def main() -> None:
     if p in ("figures", "all"):
         for mod in ["fig1_geometry", "fig2_validation", "fig3_drift_rates",
                     "fig4_drift_contour", "fig5_perfect_pareto",
-                    "fig6_dv_vs_sigma", "fig7_pareto_surface", "fig8_ablation"]:
+                    "fig6_dv_vs_sigma", "fig7_pareto_surface", "fig9_qtuning"]:
             try:
                 run(["-m", f"eilj2.figures.{mod}"])
             except subprocess.CalledProcessError as exc:

@@ -59,9 +59,11 @@ curvilinear relative coordinates and differential elements and $\Sigma$
 propagates the differential elements. Rather than transcribing the lengthy
 closed-form entries, the implementation constructs $A$, $\Sigma$, and $B$
 by numerical linearization of the exact nonlinear maps about the chief ---
-the same construction to first order, with the transcription risk traded
-for two extra digits of linearization error, verified to be equivalent to
-the closed form within first-order $J_2$ accuracy.
+the same construction to first order, trading the risk of transcribing long
+closed-form expressions for a small linearization error. We verify the
+result against the numerical truth rather than against the published
+closed form (Fig.~\ref{fig:validation}), so the implementation is
+validated by its predictive accuracy, not by term-by-term equivalence.
 
 \subsection{Quasi-nonsingular ROE and the KGD STM}
 
@@ -103,13 +105,16 @@ delta-V behavior to be strongly correlated with E/I-safe
 Figure~\ref{fig:validation} shows open-loop prediction error of each
 analytic model against the $J_2$--$J_4$ numerical truth over 30 days for a
 1-km E/I-safe formation. The ordering follows fidelity: CW and
-Schweighart--Sedwick accumulate kilometer-class error over the month, while the first-order-$J_2$ element-space models
-remain far below --- Gim--Alfriend near $100$~m and KGD at $17$--$26$~m.
-Two properties of this figure matter later: the errors of the element-space
-models are \emph{secular}, not random, growing monotonically with time; and
-a two-order-of-magnitude gap separates the best and worst models. Both
-facts return with consequences in the filter-consistency analysis of
-Section~\ref{sec:results}.
+Schweighart--Sedwick accumulate kilometre-class error over the month
+(13.5 and 12.2~km RMS respectively --- the orbit-averaged $J_2$ correction
+buys S--S only about 10\% over CW at this scale), while the
+first-order-$J_2$ element-space models remain far below: Gim--Alfriend at
+105~m RMS and KGD at 26~m RMS (33~m peak). Two properties of this figure
+matter later: the errors of the element-space models are \emph{secular},
+not random, growing monotonically with time; and a factor of roughly 500
+--- nearly three orders of magnitude --- separates the best and worst
+models. Both facts return with consequences in the filter-consistency
+analysis of Section~\ref{sec:results}.
 
 \begin{figure}[t]
   \centering

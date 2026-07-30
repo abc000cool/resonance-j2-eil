@@ -57,9 +57,15 @@ solar radiation pressure --- significant for low-altitude or
 high-area-ratio formations \cite{gaias2015drag,guffanti2019srp} --- are
 excluded so that model error is attributable, and including them would
 enlarge the secular residual the consistency analysis identifies rather
-than remove it. The campaign fixes a near-circular chief at
-$i = 98^\circ$, a single 1-km formation scale, and one tuning per
-controller; the perfect-state sweeps vary tightness but the
+than remove it. Actuator limits are applied asymmetrically: the LQR
+acceleration is
+magnitude-limited at $2\times10^{-4}\,\mathrm{m/s^2}$, whereas the MPC and
+impulsive schemes are run without a delta-V bound, so their cost figures
+are lower bounds with respect to a thrust-limited vehicle and the
+three-way cost comparison should be read with that in mind. The campaign
+also fixes a near-circular chief at $i = 98^\circ$, a single 1-km formation
+scale, and one tuning per controller; the perfect-state sweeps vary
+tightness but the
 estimation-in-the-loop grid does not. Measurement models are white and
 unbiased --- no multipath, integer-ambiguity, or attitude-coupling errors
 --- so the reliability map is, if anything, optimistic. The main results
