@@ -153,7 +153,9 @@ Snakefile        figure DAG (Linux/macOS); scripts/make_all.py mirrors it
 - `Dockerfile` for a hardened Linux build.
 - Archived release: **v0.1.0 → [10.5281/zenodo.21696854](https://doi.org/10.5281/zenodo.21696854)**
   (source, the full 45,860-trial campaign as Parquet, and the manuscript PDF).
-  Remaining publishing step: submit `paper/` to arXiv citing that DOI.
+  The version-independent concept DOI, which always resolves to the newest
+  release, is [10.5281/zenodo.21696853](https://doi.org/10.5281/zenodo.21696853).
+  Remaining publishing step: submit `paper/` to arXiv citing the version DOI.
 
 ## Citing
 
