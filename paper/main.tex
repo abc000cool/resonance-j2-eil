@@ -17,7 +17,8 @@
 \newcommand{\genfig}[3]{%
   \IfFileExists{figures/generated/#1.pdf}%
     {\includegraphics[width=#2\linewidth]{#1}}%
-    {\fbox{\parbox[c][4cm][c]{#2\linewidth}{\centering placeholder: #1\\ regenerate with #3}}}}
+    {\fbox{\parbox[c][4cm][c]{#2\linewidth}{\centering placeholder: #1\\
+    regenerate with #3}}}}
 
 \title{Estimation-in-the-loop J2 formation-keeping: a Pareto
 characterization of relative-navigation accuracy versus delta-V cost}
@@ -32,8 +33,8 @@ Formation-flying spacecraft in low Earth orbit must actively suppress the
 differential drift induced by the $J_2$ zonal harmonic, and the delta-V cost
 of doing so depends jointly on the controller, the relative-motion model
 used for prediction, and the accuracy of the on-board relative navigation
-filter. Prior systematic treatments --- most notably Koenig \&
-D'Amico~\cite{koenig2018tradeoffs} --- characterize this trade in a linear
+filter. Prior systematic treatments, most notably Koenig \&
+D'Amico~\cite{koenig2018tradeoffs}, characterize this trade in a linear
 time-invariant, LQR-only setting with the estimator abstracted as a static
 covariance floor. We extend that analysis to a controller- and
 plant-conditional characterization with \emph{actual filters running in the
@@ -46,25 +47,25 @@ EKF and driven against a numerical $J_2$--$J_4$ truth cross-validated
 against Orekit to millimeter relative agreement. A two-tier Monte-Carlo
 campaign (12{,}960 screening trials; 32{,}900 numerical-truth trials)
 yields three principal results. First, a reliability map: closed-loop
-divergence is common at realistic sensor accuracies (16--22\% of trials
-depending on the controller), concentrates in angles-only navigation, and
-renders some controller--sensor pairings infeasible outright. Second, a
-filter-consistency result with methodological consequences: process noise
-calibrated the standard way --- against open-loop propagation residuals ---
-leaves the filter overconfident by more than three orders of magnitude in
-normalized innovation squared, \emph{inverting} the apparent
-delta-V-versus-accuracy trade; the effect is worst for the most accurate
-dynamics model, and consistency restored by closed-loop covariance matching
-recovers the physically expected trade at the cost of noise feed-through.
-The residual error is secular, so no white-noise process model can
-represent it faithfully --- a quantitative argument for bias-augmented
-(Schmidt--Kalman) formulations in formation-keeping filters. Third, with a
-consistent filter the navigation-accuracy ``knee'' becomes measurable: for
-LQR under CDGPS it sits at the 3--10~cm level, so centimetre-class relative
-GPS saturates the fuel benefit, and controllers respond to
-degraded navigation differently --- LQR pays in fuel, MPC holds fuel
-constant and pays in accuracy. All software, data, and figures are openly
-released and exactly reproducible.
+divergence is common at realistic sensor accuracies, affecting 16--22\% of
+trials depending on the controller, concentrating in angles-only
+navigation, and rendering some controller--sensor pairings infeasible
+outright. Second, a filter-consistency result with methodological
+consequences. Process noise calibrated the standard way, against open-loop
+propagation residuals, leaves the filter overconfident by more than three
+orders of magnitude in normalized innovation squared, which \emph{inverts}
+the apparent delta-V-versus-accuracy trade. The effect is worst for the
+most accurate dynamics model, and consistency restored by closed-loop
+covariance matching recovers the physically expected trade at the cost of
+noise feed-through. The residual error is secular, so no white-noise
+process model can represent it faithfully, which is a quantitative argument
+for bias-augmented (Schmidt--Kalman) formulations in formation-keeping
+filters. Third, with a consistent filter the navigation-accuracy ``knee''
+becomes measurable: for LQR under CDGPS it sits at the 3--10~cm level, so
+centimetre-class relative GPS saturates the fuel benefit, and controllers
+respond to degraded navigation differently, with LQR paying in fuel while
+MPC holds fuel constant and pays in accuracy. All software, data, and
+figures are openly released and exactly reproducible.
 \end{abstract}
 
 \input{sections/intro}
@@ -77,11 +78,12 @@ released and exactly reproducible.
 \input{sections/conclusion}
 
 \section*{Data and code availability}
-All software, campaign data, and figure-generation scripts are openly available.
+All software, campaign data, and figure-generation scripts are openly
+available.
 The development repository is at
-\url{https://github.com/abc000cool/resonance-j2-eil}, and the archive of
-record --- source, the full 45{,}860-trial campaign as per-grid-point Parquet
-files, and this PDF --- is deposited at
+\url{https://github.com/abc000cool/resonance-j2-eil}. The archive of record,
+containing the source, the full 45{,}860-trial campaign as per-grid-point
+Parquet files, and this PDF, is deposited at
 \href{https://doi.org/10.5281/zenodo.21696853}{doi:10.5281/zenodo.21696853},
 a version-independent identifier that always resolves to the newest release
 (v0.1.1 accompanies this manuscript).

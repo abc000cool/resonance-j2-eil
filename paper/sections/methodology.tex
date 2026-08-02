@@ -3,27 +3,26 @@
 \subsection{Numerical truth and cross-validation}
 
 The truth is a two-spacecraft Cartesian propagator with $J_2$--$J_4$ zonal
-gravity, integrated with DOP853 (a verified fixed-step RK4 fast path,
+gravity, integrated with DOP853; a verified fixed-step RK4 fast path,
 agreeing to 3\,\textmu m relative position over an orbit, is used inside
-the Monte-Carlo campaign). A zonal-only field is deliberate: the study
+the Monte-Carlo campaign. A zonal-only field is deliberate. The study
 isolates the perturbation the analytic models claim to capture, so any
-closed-loop pathology is attributable to the
-estimation-and-control architecture rather than to unmodeled forces.
+closed-loop pathology is attributable to the estimation-and-control
+architecture rather than to unmodeled forces.
 
 The propagator is cross-validated against an independent oracle: an Orekit
 numerical propagator with a degree-4, order-0 gravity field, from identical
 initial conditions over the full 30-day campaign duration
-(Table~\ref{tab:orekit}). Relative position --- the quantity this study
-uses --- agrees to 2.3~mm RMS (6.9~mm maximum), five orders of magnitude
-below the formation scale. Absolute position agrees to 9.1~m RMS. That
-residual is consistent with
-the $\sim$$10^{-9}$ relative difference between the two libraries'
-gravitational-constant conventions: a fractional error $\epsilon$ in $\mu$
-offsets the mean motion by $\epsilon/2$, giving an along-track separation
-growing \emph{linearly} as $a n (\epsilon/2) t \approx 10$~m over 30 days
-at this altitude --- the magnitude observed. It is reported for
-completeness; the relative state that this study actually uses is
-unaffected at the millimetre level.
+(Table~\ref{tab:orekit}). Relative position, the quantity this study uses,
+agrees to 2.3~mm RMS (6.9~mm maximum), five orders of magnitude below the
+formation scale. Absolute position agrees to 9.1~m RMS. That residual is
+consistent with the $\sim$$10^{-9}$ relative difference between the two
+libraries' gravitational-constant conventions: a fractional error
+$\epsilon$ in $\mu$ offsets the mean motion by $\epsilon/2$, giving an
+along-track separation that grows \emph{linearly} as
+$a n (\epsilon/2) t \approx 10$~m over 30 days at this altitude, which is
+the magnitude observed. It is reported for completeness; the relative state
+that this study actually uses is unaffected at the millimetre level.
 
 \begin{table}[t]
   \centering
@@ -54,38 +53,41 @@ failures.
 
 The campaign runs in two tiers. The \emph{screening} tier replaces the
 numerical truth with an STM-surrogate truth (KGD plus calibrated white
-acceleration) and sweeps the full grid --- 3 controllers $\times$ 3 filter
-models $\times$ 18 (architecture, $\sigma$) points $\times$ 4 geometries
-$=$ 648 points at 20 seeds each (12{,}960 trials) --- cheaply. The
-\emph{full} tier reruns the screening-informed grid (sigma points pruned to
-bracket the observed knees; the redundant GERO geometry dropped) against
-the numerical truth at $N = 100$ seeds: 324 grid points plus five
-extended-sigma backfill points, 32{,}900 trials. Agreement between tiers
-validates the surrogate: per-cell median delta-V rank-correlates at
-Spearman $\rho = 0.83$ with numerical-truth medians $7\%$ higher at the
-median (Pearson correlation is uninformative at 0.37 --- the delta-V
-distribution is heavy-tailed, and rank statistics are used throughout).
+acceleration) and sweeps the full grid cheaply: 3 controllers $\times$ 3
+filter models $\times$ 18 (architecture, $\sigma$) points $\times$ 4
+geometries $=$ 648 points at 20 seeds each, or 12{,}960 trials. The
+\emph{full} tier reruns the screening-informed grid against the numerical
+truth at $N = 100$ seeds, with sigma points pruned to bracket the observed
+knees and the redundant GERO geometry dropped: 324 grid points plus five
+extended-sigma backfill points, or 32{,}900 trials. Agreement between tiers
+validates the surrogate. Per-cell median delta-V rank-correlates at Spearman
+$\rho = 0.83$, with numerical-truth medians $7\%$ higher at the median.
+Pearson correlation is uninformative at 0.37 because the delta-V
+distribution is heavy-tailed, and rank statistics are therefore used
+throughout.
 
-Every trial is exactly reproducible: the RNG seed derives from
+Every trial is exactly reproducible. The RNG seed derives from
 \texttt{SeedSequence([root, point-hash, trial-index])}, so any single trial
-can be regenerated in isolation; results are written per grid point to
+can be regenerated in isolation, and results are written per grid point to
 Parquet, making campaigns resumable and incrementally extensible.
 
 \subsection{Knee metric}\label{sec:kneemetric}
 
-The navigation-accuracy ``knee'' --- the accuracy beyond which further
-sensor improvement no longer buys delta-V --- is reported with a metric
-designed after a naive version (first $\sigma$ whose median delta-V exceeds
-$1.1\times$ the tightest-sigma baseline) proved fragile on a coarse sigma
-grid, agreeing between tiers in only 55\% of cells. Per
-(controller, architecture, filter, geometry) cell the robust metric
-reports: a \emph{status} --- rising, flat, or falling, from the Spearman
-trend of median delta-V over feasible sigma points, where a sigma point is
-feasible if at least 10 of 100 seeds survive --- so that ``no knee'' is
-distinguishable from ``trend inverted'' and ``all trials diverged'';
-threshold knees at 5/10/25/50\% delta-V rise with a stability flag (the
-verdict is \emph{stable} when the 5\% and 50\% knees agree within one grid
-step); and a fitted knee from
+The navigation-accuracy ``knee'', the accuracy beyond which further sensor
+improvement no longer buys delta-V, is reported with a metric designed after
+a naive version proved fragile. That version took the first $\sigma$ whose
+median delta-V exceeds $1.1\times$ the tightest-sigma baseline, and on a
+coarse sigma grid it agreed between tiers in only 55\% of cells. Per
+(controller, architecture, filter, geometry) cell the robust metric reports
+three quantities. The first is a \emph{status}, either rising, flat, or
+falling, taken from the Spearman trend of median delta-V over feasible sigma
+points, where a sigma point is feasible if at least 10 of 100 seeds survive;
+this distinguishes ``no knee'' from ``trend inverted'' and from ``all trials
+diverged''. The second is a set of threshold knees at 5, 10, 25, and 50\%
+delta-V
+rise, with a stability flag that marks a verdict \emph{stable} when the 5\%
+and 50\% knees agree within one grid step. The
+third is a fitted knee from
 $\Delta V(\sigma) = \Delta V_0\,(1 + (\sigma/\sigma_k)^p)$, flagged when it
 extrapolates beyond the swept range. Infeasible sigma points are marked
 explicitly in every figure rather than silently omitted.
@@ -96,8 +98,8 @@ The implementation is pure Python (NumPy/SciPy/CasADi), with a locked
 dependency environment (\texttt{uv}), a Docker fallback, continuous
 integration running the full verification suite, and a Snakemake DAG that
 regenerates every figure in this paper from the committed Parquet data with
-one command (\texttt{snakemake -c8 figures}; the knee table follows from
+one command (\texttt{snakemake -c8 figures}). The knee table follows from
 \texttt{scripts/find\_knees.py}, and Table~\ref{tab:orekit} from the
-Orekit cross-validation script, which additionally needs a JVM). Code and
+Orekit cross-validation script, which additionally needs a JVM. Code and
 data are openly released; the archived version of record is linked in the
 data-availability statement.

@@ -11,9 +11,9 @@ millimeter-to-centimeter accuracy on PRISMA, TanDEM-X, and CanX-4/-5
 montenbruck2011tandemxnav,kahr2018canx}. \emph{Inter-satellite RF ranging}
 provides range and range-rate along the line of sight, the architecture
 flown on MMS \cite{roscoe2011mms}. \emph{Angles-only optical navigation}
-provides two bearing angles and no range; its weak observability --- the
+provides two bearing angles and no range. Its weak observability, the
 classical range-ambiguity dilemma formalized by Woffinden and Geller
-\cite{woffinden2009observability} --- is broken in practice by $J_2$ and by
+\cite{woffinden2009observability}, is broken in practice by $J_2$ and by
 maneuvers \cite{damico2013argon,gaias2014anglesonly,sullivan2021nonlinear,
 willis2024polynomial}, both of which are present in the closed-loop
 scenarios studied here. Each architecture is swept over roughly two decades
@@ -53,7 +53,7 @@ inhibited for a two-orbit warm-up while the filter converges. An unscented
 (sigma-point) variant is implemented and verified for use as an ablation;
 all campaign results below use the EKF.
 
-\subsection{Process-noise calibration --- and a warning}
+\subsection{Process-noise calibration}
 
 The filter's process noise is a white-acceleration power spectral density
 $q$, mapped to the native state coordinates per step. Its value is
@@ -63,17 +63,18 @@ three days, and fit $q$ to the residual velocity variance
 (\texttt{scripts/calibrate\_q.py}). This yields
 $q \approx 5.5\times10^{-10}$, $8.3\times10^{-13}$, and
 $9.4\times10^{-15}\,(\mathrm{m/s^2})^2\,\mathrm{s}$ for S--S, GA, and KGD
-respectively (carried in the campaign configuration as $5.5\times10^{-10}$,
-$8.0\times10^{-13}$, and $1.0\times10^{-14}$) --- nearly five orders of
-magnitude apart, tracking the fidelity ordering of Fig.~\ref{fig:validation}: the
-calibration hands the most accurate model the smallest process noise.
+respectively, carried in the campaign configuration as
+$5.5\times10^{-10}$, $8.0\times10^{-13}$, and $1.0\times10^{-14}$. These
+values span nearly five orders of magnitude, tracking the fidelity ordering
+of Fig.~\ref{fig:validation}, so the calibration hands the most accurate
+model the smallest process noise.
 
 Filter statistical consistency is monitored by the standard normalized
 innovation squared (NIS, expectation $\dim z$) and normalized estimation
 error squared (NEES, expectation $\dim x$), both verified on linear
 systems in the test suite. Section~\ref{sec:results} shows that the
-open-loop calibration above, despite being carried out exactly as
-intended, produces filters that are severely inconsistent in the closed
-loop --- and that this single implementation choice, easily hidden inside
-any estimation-in-the-loop study, qualitatively inverts the headline
-trade curve.
+open-loop calibration above, despite being carried out exactly as intended,
+produces filters that are severely inconsistent in the closed loop, and
+that this single implementation choice, easily hidden inside any
+estimation-in-the-loop study, qualitatively inverts the headline trade
+curve.
