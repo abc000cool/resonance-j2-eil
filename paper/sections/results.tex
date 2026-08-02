@@ -1,31 +1,29 @@
 \section{Results}\label{sec:results}
 
-Results are presented in six blocks: uncontrolled drift (the problem),
-perfect-navigation controller baselines (the floor), the
-estimation-in-the-loop reliability map, the filter-consistency analysis
-(the paper's central methodological result), the corrected trade curves and
-knee summary, and the fidelity-in-the-loop reading. Model validation
+Results are presented in six blocks: uncontrolled drift, perfect-navigation
+controller baselines, the estimation-in-the-loop reliability map, the
+filter-consistency analysis, the corrected trade curves and knee summary,
+and the fidelity-in-the-loop reading. Model validation
 (Fig.~\ref{fig:validation}) was presented with the models in
 Section~\ref{sec:models}.
 
 \subsection{Uncontrolled drift characterization}
 
 Figures~\ref{fig:drift} and~\ref{fig:contour} quantify the problem the
-controllers must solve: uncontrolled differential drift grows with
-formation size and with the differential-element content of the geometry,
-varies strongly with chief inclination through the $J_2$ secular rates, and
-is dominated by the along-track runaway induced by relative semi-major-axis
-and inclination-vector offsets --- the classical structure
+controllers must solve. Uncontrolled differential drift grows with formation
+size and with the differential-element content of the geometry, varies
+strongly with chief inclination through the $J_2$ secular rates, and is
+dominated by the along-track runaway induced by relative semi-major-axis and
+inclination-vector offsets, which is the classical structure
 \cite{schaub2001j2invariant,alfriend2010formation}. At 1-km scale the free
-drift spans more than two orders of magnitude
-across geometries: pure along-track separation drifts only 0.6--0.9~m/day
-(tens of metres per month), whereas the passively safe E/I-vector geometry
---- which deliberately carries relative eccentricity and inclination
-vectors --- is the \emph{fastest} drifter at 61--215~m/day, or 1.8--6.4~km
-per month, with PCO and GERO in between. Passive collision safety and low
-station-keeping cost are therefore in direct tension: the geometries that
-are safe to fly untended are precisely the ones that most need active
-control.
+drift spans more than two orders of magnitude across geometries. Pure
+along-track separation drifts only 0.6--0.9~m/day, tens of metres per month,
+whereas the passively safe E/I-vector geometry, which deliberately carries
+relative eccentricity and inclination vectors, is the fastest drifter at
+61--215~m/day, or 1.8--6.4~km per month, with PCO and GERO in between.
+Passive collision safety and low station-keeping cost are therefore in
+direct tension: the geometries that are safe to fly untended are the ones
+that most need active control.
 
 \begin{figure}[t]
   \centering
@@ -43,16 +41,15 @@ control.
 \subsection{Perfect-state controller baselines}
 
 With perfect navigation (Fig.~\ref{fig:perfect}, numerical truth), the
-three controllers trace the expected cost/precision frontier: the
-closed-form impulsive scheme is loose and cheap
-($\approx$37~m/s/yr at $\approx$45~m RMS formation-keeping error), MPC
-occupies the middle ($\approx$85~m/s/yr at $\approx$16~m), and LQR buys
-meter-level control at steeply rising cost, reaching $\sim$1~m RMS.
-Below $\approx$0.9~m the LQR locus folds back on itself: tighter weighting
-stops improving accuracy and only burns fuel --- a control-authority floor
-set by the saturation bound and the 60-s actuation cadence. These curves
-are the reference against which all estimation-in-the-loop cost increases
-are measured.
+three controllers trace the expected cost/precision frontier. The
+closed-form impulsive scheme is loose and cheap, at roughly 37~m/s/yr for
+about 45~m RMS formation-keeping error; MPC occupies the middle at roughly
+85~m/s/yr for about 16~m; and LQR buys meter-level control at steeply rising
+cost, reaching $\sim$1~m RMS. Below about 0.9~m the LQR locus folds back on
+itself, where tighter weighting stops improving accuracy and only burns
+fuel, indicating a control-authority floor set by the saturation bound and
+the 60-s actuation cadence. These curves are the reference against which all
+estimation-in-the-loop cost increases are measured.
 
 \begin{figure}[t]
   \centering
@@ -64,24 +61,23 @@ are measured.
 
 \subsection{Estimation in the loop: the reliability map}
 
-The first result of running real filters is one that covariance-floor
-analyses cannot produce: a large fraction of closed-loop trials
-\emph{fail outright}. Across the full tier, 22.1\% of LQR trials, 19.7\% of
-MPC trials, and 16.0\% of impulsive trials diverge. Failures are not
-uniformly distributed: they concentrate in angles-only navigation (52\% of
-S--S-filtered, 44\% of KGD-filtered, and 23\% of GA-filtered angles-only
-trials diverge), and at specific controller--sensor--sigma combinations the
-failure is total --- 21 of 329 grid points have \emph{zero} surviving
-seeds out of 100, concentrated in LQR and MPC under angles-only navigation.
-At specific RF sigmas, MPC divergence exceeds 90/100. In every figure these
-infeasible points are marked explicitly ($\times$ symbols in
-Fig.~\ref{fig:headline}) rather than omitted; a mission designer needs to
-know where the cliff is, not merely where the gradient points. The
-practical reading is blunt: angles-only relative navigation, adequate in
-open-loop estimation studies, frequently cannot close a 30-day
-formation-keeping loop at 1-km scale with these controllers, echoing
-flight experience that angles-only operations require careful maneuver
-design \cite{damico2013argon,gaias2014anglesonly}.
+Running real filters produces a result that covariance-floor analyses cannot
+generate: a large fraction of closed-loop trials fail outright. Across the
+full tier, 22.1\% of LQR trials, 19.7\% of MPC trials, and 16.0\% of
+impulsive trials diverge. Failures are not uniformly distributed. They
+concentrate in angles-only navigation, where 52\% of S--S-filtered, 44\% of
+KGD-filtered, and 23\% of GA-filtered trials diverge, and at specific
+controller, sensor and sigma combinations the failure is total: 21 of 329
+grid points have zero surviving seeds out of 100, concentrated in LQR and
+MPC under angles-only navigation. At specific RF sigmas, MPC divergence
+exceeds 90/100. These infeasible points are marked explicitly in every
+figure ($\times$ symbols in Fig.~\ref{fig:headline}) rather than omitted,
+since the location of the cliff is itself a design input. The practical
+reading is that angles-only relative navigation, adequate in open-loop
+estimation studies, frequently cannot close a 30-day formation-keeping loop
+at 1-km scale with these controllers, which echoes flight experience that
+angles-only operations require careful maneuver design
+\cite{damico2013argon,gaias2014anglesonly}.
 
 \begin{figure}[t]
   \centering
@@ -89,8 +85,8 @@ design \cite{damico2013argon,gaias2014anglesonly}.
   \caption{Closed-loop $\Delta V$/yr vs navigation accuracy (E/I-safe
   geometry, KGD filter, open-loop-calibrated $Q$). Shaded bands are
   interquartile ranges over 100 seeds; $\times$ marks sigma points at which
-  all 100 seeds diverged. Note the \emph{falling} trend in the CDGPS panel
-  --- the signature of the filter-consistency problem analyzed in
+  all 100 seeds diverged. Note the \emph{falling} trend in the CDGPS panel,
+  the signature of the filter-consistency problem analyzed in
   Sec.~\ref{sec:consistency}.}
   \label{fig:headline}
 \end{figure}
@@ -98,68 +94,65 @@ design \cite{damico2013argon,gaias2014anglesonly}.
 \subsection{Filter consistency governs the apparent trade}
 \label{sec:consistency}
 
-Figure~\ref{fig:headline} contains a physically impossible result: median
-delta-V \emph{falls} monotonically as CDGPS accuracy degrades from 5~mm to
-10~cm (for LQR/KGD, 85~$\to$~12~m/s/yr, Spearman $\rho = -1.00$), and
-formation-keeping error \emph{improves} simultaneously. Better sensors
-appear to cost fuel and accuracy. The explanation is the filter, not the
-physics. At $\sigma = 5$~mm the KGD-filtered EKF's median NIS is
-$1.3\times10^4$ across CDGPS cells --- against an expectation of
-$\dim z = 3$ --- so the innovation covariance is understated by more than
-three orders of magnitude: the filter over-weights its prediction, and the
-controller chases a confidently wrong estimate --- burning fuel
-proportional to the (large) innovation content of accurate measurements.
-As $\sigma$ grows, the measurement weight shrinks toward what the broken
-covariance can support and the pathology relaxes: NIS falls toward
-consistency and the apparent cost falls with it. The effect is ordered by
-process noise: at the same 5-mm point the S--S filter
-($q = 5.5\times10^{-10}$) has NIS 4.2 --- consistent --- while GA
-($8.0\times10^{-13}$) reads 134 and KGD ($1.0\times10^{-14}$) reads
-$1.3\times10^4$. The open-loop calibration of Section~\ref{sec:nav}
-rewarded the best dynamics model with the least protection.
+Figure~\ref{fig:headline} contains a physically implausible result. Median
+delta-V falls monotonically as CDGPS accuracy degrades from 5~mm to 10~cm
+(for LQR/KGD, 85~$\to$~12~m/s/yr, Spearman $\rho = -1.00$), and
+formation-keeping error improves at the same time, so that better sensors
+appear to cost both fuel and accuracy. The explanation lies in the filter
+rather than in the physics. At $\sigma = 5$~mm the KGD-filtered EKF has a
+median NIS of $1.3\times10^4$ across CDGPS cells, against an expectation of
+$\dim z = 3$, so the innovation covariance is understated by more than three
+orders of magnitude. The filter over-weights its prediction, and the
+controller chases a confidently wrong estimate, burning fuel in proportion
+to the large innovation content of accurate measurements. As $\sigma$ grows,
+the measurement weight shrinks toward what the broken covariance can
+support and the pathology relaxes, so NIS falls toward consistency and the
+apparent cost falls with it. The effect is ordered by process noise: at the
+same 5-mm point the S--S filter ($q = 5.5\times10^{-10}$) has NIS 4.2, which
+is consistent, while GA ($8.0\times10^{-13}$) reads 134 and KGD
+($1.0\times10^{-14}$) reads $1.3\times10^4$. The open-loop calibration of
+Section~\ref{sec:nav} gave the best dynamics model the least protection.
 
 Two experiments pin down the mechanism. First, disabling control entirely
-makes consistency 15$\times$ \emph{worse}: in the LQR/along-track cell,
-whose median NIS is $8.6\times10^3$ with control active, it rises to
-$1.2\times10^5$ with the controller inhibited for the whole run. the
-mismatch is the STM's
-\emph{secular} error (Fig.~\ref{fig:validation}), which grows with
-unconstrained drift; the control loop partially masks it by holding the
-state near the reference. Control feed-through is exonerated. Second,
-re-tuning $q$ by closed-loop covariance matching --- inflating it until
-time-averaged NIS matches $\dim z$
-(\texttt{scripts/tune\_q\_closedloop.py}) --- requires
+makes consistency 15$\times$ worse: in the LQR/along-track cell, whose
+median NIS is $8.6\times10^3$ with control active, it rises to
+$1.2\times10^5$ with the controller inhibited for the whole run. The
+mismatch is therefore the STM's secular error (Fig.~\ref{fig:validation}),
+which grows with unconstrained drift, and the control loop partially masks
+it by holding the state near the reference; control feed-through is
+exonerated. Second, re-tuning $q$ by closed-loop covariance matching,
+inflating it until time-averaged NIS matches $\dim z$
+(\texttt{scripts/tune\_q\_closedloop.py}), requires
 $q_{\mathrm{KGD}}: 1.0\times10^{-14} \to 3.2\times10^{-10}$, a factor of
-$3\times10^4$, landing within a factor of two of the S--S value. The
-required covariance is nearly \emph{common-mode} across dynamics models of
+$3\times10^4$, which lands within a factor of two of the S--S value. The
+required covariance is thus nearly common-mode across dynamics models of
 vastly different fidelity, because in closed loop the drift that
 distinguishes them is suppressed and what remains is the shared secular
 character of the residual.
 
 Figure~\ref{fig:qtuning} shows the consequence at $N = 100$. With the
-NIS-matched filter, consistency holds across the entire sweep (median NIS
-between 3.1 and 5.9 against $\dim z = 3$), and the trade un-inverts: LQR
-delta-V rises monotonically with
-sigma ($137 \to 162$~m/s/yr over 5~mm--10~cm, $\rho = +1.00$) and so does
-its formation-keeping error --- the physically expected behavior. MPC
-responds differently: its delta-V is nearly flat while its RMS error rises
-monotonically --- \emph{MPC trades accuracy, not fuel, for navigation
-quality}, a controller-level distinction invisible in any single-metric
-study. Consistency is not free: at the 5-mm point the consistent MPC loop
-holds 10.2~m RMS at 51~m/s/yr where the inconsistent one held 4.8~m at
-19.6~m/s/yr --- inflated process noise raises the filter gain and feeds
-measurement noise into the control. Finally, even the matched filter's
-NEES remains between 28 and 1460, falling as $\sigma$ grows: the covariance
-is consistent in the measured
-subspace but still optimistic in the unobserved directions, as expected
-when a \emph{secular} error is modeled as white noise. No white-$Q$ EKF
-can be simultaneously consistent and well-performing against a secular
-model error; the principled remedy is to estimate the bias --- a
-Schmidt--Kalman or bias-augmented formulation --- which we leave as
-follow-on work. At the loosest CDGPS point ($\sigma = 1$~m) both corrected
-curves roll off as the filter enters a measurement-rejection regime and the
-loop coasts on the prediction; the knee analysis below therefore reports
-trends over the flight-relevant 5~mm--10~cm range.
+NIS-matched filter, consistency holds across the entire sweep, with median
+NIS between 3.1 and 5.9 against $\dim z = 3$, and the trade un-inverts. LQR
+delta-V rises monotonically with sigma ($137 \to 162$~m/s/yr over
+5~mm--10~cm, $\rho = +1.00$) and so does its formation-keeping error, which
+is the physically expected behavior. MPC responds differently: its delta-V
+is nearly flat while its RMS error rises monotonically, so MPC trades
+accuracy rather than fuel for navigation quality, a controller-level
+distinction that a single-metric study cannot reveal. Consistency carries a
+cost. At the 5-mm point the consistent MPC loop holds 10.2~m RMS at
+51~m/s/yr where the inconsistent one held 4.8~m at 19.6~m/s/yr, because
+inflated process noise raises the filter gain and feeds measurement noise
+into the control. Finally, even the matched filter's NEES remains between 28
+and 1460, falling as $\sigma$ grows: the covariance is consistent in the
+measured subspace but still optimistic in the unobserved directions, as
+expected when a secular error is modeled as white noise. No white-$Q$ EKF
+can be simultaneously consistent and well-performing against a secular model
+error, and the principled remedy is to estimate the bias with a
+Schmidt--Kalman or bias-augmented formulation, which we leave as follow-on
+work. At the loosest CDGPS point ($\sigma = 1$~m) both corrected curves roll
+off as the filter enters a measurement-rejection regime and the loop coasts
+on the prediction, so the knee analysis below reports trends over the
+flight-relevant 5~mm--10~cm range.
 
 \begin{figure}[t]
   \centering
@@ -176,19 +169,19 @@ trends over the flight-relevant 5~mm--10~cm range.
 
 Table~\ref{tab:knees} summarizes the robust knee metric of
 Section~\ref{sec:kneemetric} over the full tier. The per-filter status
-distribution is the consistency contamination made visible: under the
+distribution makes the consistency contamination visible: under the
 open-loop-calibrated $Q$, only 1 of 27 KGD cells shows the physically
-expected rising trend, against 11 of 27 for GA and 6 of 27 for S--S ---
-the better the dynamics model, the more thoroughly its trade curve is
-corrupted. Where knees are measurable they are actionable: with the
-consistent S--S filter, LQR's CDGPS knee sits at 3--10~cm ($1\sigma$,
-threshold metric) --- centimeter-class relative GPS saturates the fuel
-benefit, and sub-centimeter accuracy buys nothing --- and under the
-NIS-matched KGD filter the corrected LQR curve places the 10\%-rise point
-at the same decade. For angles-only navigation the knees that exist sit at
-10--50~arcsec, but the reliability map above bounds their usefulness.
-Of 81 cells, 60 have threshold-stable verdicts; the remainder are reported
-with their instability flagged rather than forced to a point estimate.
+expected rising trend, against 11 of 27 for GA and 6 of 27 for S--S, so the
+better the dynamics model, the more thoroughly its trade curve is corrupted.
+Where knees are measurable they are directly usable. With the consistent
+S--S filter, LQR's CDGPS knee sits at 3--10~cm ($1\sigma$, threshold
+metric), so centimeter-class relative GPS saturates the fuel benefit and
+sub-centimeter accuracy buys nothing; under the NIS-matched KGD filter the
+corrected LQR curve places the 10\%-rise point in the same decade. For
+angles-only navigation the knees that exist sit at 10--50~arcsec, though the
+reliability map above bounds their usefulness. Of 81 cells, 60 have
+threshold-stable verdicts; the remainder are reported with their instability
+flagged rather than forced to a point estimate.
 
 \begin{table}[t]
   \centering
@@ -210,22 +203,20 @@ with their instability flagged rather than forced to a point estimate.
 \subsection{Fidelity in the loop}
 
 The campaign's filter-model dimension is itself the STM-fidelity ablation,
-and its answer is not the expected one. Open loop, KGD beats S--S by a
-factor of roughly 500
-(Fig.~\ref{fig:validation}); in the closed loop with
-each filter carrying its conventionally calibrated $Q$, the \emph{crude
-S--S filter is the only one that is statistically consistent out of the
-box}, produces the only systematically usable trade curves, and --- because
-closed-loop covariance demand is common-mode --- gives up far less than
-the validation gap suggests. KGD retains the best point estimates (RMS
-position error 3.8~m vs 13--15~m for the others under CDGPS), so the
-high-fidelity model is the right choice \emph{when its covariance is
-matched in closed loop}; but fidelity spent on the mean while the
-covariance is starved yields the worst of both. For a mission designer the
-ranking question ``which model should the filter carry?'' is therefore
-inseparable from ``how will its process noise be calibrated?'' --- the
-central practical lesson of this study. The
-Pareto surface over (navigation accuracy, control tightness)
+and its answer runs against expectation. Open loop, KGD beats S--S by a
+factor of roughly 500 (Fig.~\ref{fig:validation}). In the closed loop, with
+each filter carrying its conventionally calibrated $Q$, the crude S--S
+filter is the only one that is statistically consistent without further
+tuning, it produces the only systematically usable trade curves, and,
+because closed-loop covariance demand is common-mode, it gives up far less
+than the validation gap suggests. KGD retains the best point estimates, with
+RMS position error of 3.8~m against 13--15~m for the others under CDGPS, so
+the high-fidelity model is the right choice when its covariance is matched
+in closed loop; fidelity spent on the mean while the covariance is starved
+gives the worst of both. For a mission designer, the question of which model
+the filter should carry is therefore inseparable from how its process noise
+will be calibrated, which is the central practical lesson of this study. The
+Pareto surface over navigation accuracy and control tightness
 (Fig.~\ref{fig:surface}) completes the picture for the consistent-filter
 configuration.
 

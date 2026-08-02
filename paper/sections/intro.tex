@@ -1,9 +1,9 @@
 \section{Introduction}\label{sec:intro}
 
-Formation-flying missions in low Earth orbit (LEO) --- PRISMA
+Formation-flying missions in low Earth orbit (LEO), among them PRISMA
 \cite{damico2012prisma}, TanDEM-X \cite{montenbruck2008tandemx}, GRACE-FO
 \cite{kornfeld2019gracefo}, NASA Starling \cite{kruger2025starling}, and the
-upcoming VISORS telescope \cite{guffanti2023visors} --- must continuously
+upcoming VISORS telescope \cite{guffanti2023visors}, must continuously
 counteract the differential secular drift induced by the Earth-oblateness
 $J_2$ harmonic. The controller that performs this formation-keeping never
 sees the true relative state: it acts on the estimate produced by a relative
@@ -13,42 +13,39 @@ relative-motion model used for prediction.
 
 The most directly comparable systematic treatment of this coupling,
 Koenig \& D'Amico \cite{koenig2018tradeoffs}, characterizes the trade in an
-LTI,
-near-circular, LQR-only setting with the estimator abstracted as a static
-covariance floor. This paper extends that analysis along five axes:
+LTI, near-circular, LQR-only setting with the estimator abstracted as a
+static covariance floor. This paper extends that analysis along five axes:
 (i) three controllers instead of one; (ii) three relative-motion STMs
-including the modern quasi-nonsingular ROE STM
-\cite{koenig2017stm}; (iii) three realistic measurement architectures with
-actual filters running in the loop, not a static covariance; (iv) a Pareto
-\emph{surface} instead of a single trade curve; and (v) divergence
-statistics that locate where certainty-equivalent control fails outright,
-instead of assuming throughout that it holds. The same questions have
-recently been taken up for cislunar
+including the modern quasi-nonsingular ROE STM \cite{koenig2017stm};
+(iii) three realistic measurement architectures with actual filters running
+in the loop, not a static covariance; (iv) a Pareto \emph{surface} instead
+of a single trade curve; and (v) divergence statistics that locate where
+certainty-equivalent control fails outright, instead of assuming throughout
+that it holds. The same questions have recently been taken up for cislunar
 formations, where long-duration station-keeping strategies
 \cite{foss2025stationkeeping} and impulsive relative-motion control via
 reachable-set theory \cite{hunter2025cislunar} are being developed against
-far less certain dynamics; the LEO setting studied here has the advantage
+far less certain dynamics. The LEO setting studied here has the advantage
 that the dominant perturbation is precisely known, so any closed-loop
 pathology that appears must be attributed to the estimation-and-control
 architecture rather than to dynamical ignorance.
 
-Running the estimator explicitly, rather than abstracting it, turned out to
-matter more than anticipated. When the extended Kalman filter's process
-noise is calibrated the way it usually is in practice --- by fitting a
-white-acceleration power spectral density to short-horizon, \emph{open-loop}
-propagation residuals --- the resulting filter is statistically
-inconsistent in the 30-day \emph{closed-loop} regime: overconfident by more
-than three orders of magnitude in normalized innovation squared (NIS) and,
-contrary to intuition, worst for the \emph{most accurate} dynamics model,
-which the calibration rewards with the smallest process noise. The
-practical consequence is not subtle: the apparent
-delta-V-versus-navigation-accuracy trade \emph{inverts} --- fuel cost
-appears to fall as sensors degrade --- and a mission designer reading such
-a curve would draw exactly the wrong conclusion. We diagnose the mechanism,
-show by direct experiment that it is the secular error of the analytic
-state-transition matrices rather than control feed-through, restore
-consistency by closed-loop covariance matching, and quantify what
-consistency costs in closed-loop performance.
+Running the estimator explicitly, rather than abstracting it, proved
+consequential. When the extended Kalman filter's process noise is calibrated
+the way it usually is in practice, by fitting a white-acceleration power
+spectral density to short-horizon \emph{open-loop} propagation residuals,
+the resulting filter is statistically inconsistent in the 30-day
+\emph{closed-loop} regime. It is overconfident by more than three orders of
+magnitude in normalized innovation squared (NIS) and, contrary to intuition,
+the effect is worst for the \emph{most accurate} dynamics model, which the
+calibration rewards with the smallest process noise. The consequence is
+severe: the apparent delta-V-versus-navigation-accuracy trade
+\emph{inverts}, so that fuel cost appears to fall as sensors degrade, and a
+mission designer reading such a curve would draw the wrong conclusion. We
+diagnose the mechanism, show by direct experiment that it arises from the
+secular error of the analytic state-transition matrices rather than from
+control feed-through, restore consistency by closed-loop covariance
+matching, and quantify what consistency costs in closed-loop performance.
 
 The contributions are:
 \begin{enumerate}
@@ -57,14 +54,14 @@ The contributions are:
     STMs, three measurement architectures, and a numerical $J_2$--$J_4$
     truth cross-validated against Orekit to millimeter-level relative
     agreement (Sections~\ref{sec:models}--\ref{sec:method});
-  \item a two-tier Monte-Carlo campaign --- an STM-surrogate screening tier
-    (12{,}960 trials) whose per-cell delta-V medians rank-correlate at
-    $\rho = 0.83$ with the numerical-truth full tier (32{,}900 trials),
-    validating surrogate screening as a design practice
+  \item a two-tier Monte-Carlo campaign in which an STM-surrogate screening
+    tier (12{,}960 trials) yields per-cell delta-V medians that
+    rank-correlate at $\rho = 0.83$ with the numerical-truth full tier
+    (32{,}900 trials), validating surrogate screening as a design practice
     (Section~\ref{sec:method});
-  \item a controller--sensor \emph{reliability map}: divergence
+  \item a controller--sensor \emph{reliability map} giving divergence
     probabilities and outright-infeasible pairings at realistic sensor
-    accuracies --- information that point-estimate trade studies do not
+    accuracies, information that point-estimate trade studies do not
     surface (Section~\ref{sec:results});
   \item the filter-consistency result summarized above, including the
     demonstration that a white-noise process model cannot represent the
@@ -72,9 +69,10 @@ The contributions are:
     (Schmidt--Kalman) formulations in formation-keeping filters
     (Section~\ref{sec:results});
   \item navigation-accuracy knees measured with a threshold-robust metric
-    under a consistent filter, and the observation that controllers degrade
-    along different axes --- LQR pays for poor navigation in fuel, MPC in
-    accuracy (Sections~\ref{sec:results}--\ref{sec:discussion}).
+    under a consistent filter, together with the observation that
+    controllers degrade along different axes: LQR pays for poor navigation
+    in fuel, MPC in accuracy
+    (Sections~\ref{sec:results}--\ref{sec:discussion}).
 \end{enumerate}
 
 The paper is organized as follows. Section~\ref{sec:models} summarizes the

@@ -25,11 +25,11 @@ retained as the zero-fidelity control case.
 To first order, $J_2$ produces secular rates in the right ascension of the
 ascending node, argument of perigee, and mean anomaly
 \cite{brouwer1959solution,vallado2013fundamentals}. Two spacecraft with
-slightly different orbital elements experience slightly different rates,
-and the resulting \emph{differential} drift --- dominated by the
-along-track runaway from differential nodal and anomalistic rates --- is
-the operational problem formation-keeping must solve. Mean and osculating
-elements are related by the first-order Brouwer--Lyddane transformation
+slightly different orbital elements experience slightly different rates, and
+the resulting \emph{differential} drift, dominated by the along-track
+runaway from differential nodal and anomalistic rates, is the operational
+problem formation-keeping must solve. Mean and osculating elements are
+related by the first-order Brouwer--Lyddane transformation
 \cite{brouwer1959solution,lyddane1963small}; all analytic models below
 propagate mean elements, and the framework converts to and from osculating
 states at the truth interface. For particular element combinations the
@@ -58,20 +58,20 @@ $\Phi(t,t_0) = A(t)\,\Sigma(t,t_0)\,B(t_0)$, where $A$ and $B$ map between
 curvilinear relative coordinates and differential elements and $\Sigma$
 propagates the differential elements. Rather than transcribing the lengthy
 closed-form entries, the implementation constructs $A$, $\Sigma$, and $B$
-by numerical linearization of the exact nonlinear maps about the chief ---
-the same construction to first order, trading the risk of transcribing long
-closed-form expressions for a small linearization error. We verify the
-result against the numerical truth rather than against the published
-closed form (Fig.~\ref{fig:validation}), so the implementation is
-validated by its predictive accuracy, not by term-by-term equivalence.
+by numerical linearization of the exact nonlinear maps about the chief.
+This is the same construction to first order, and it trades the risk of
+transcribing long closed-form expressions for a small linearization error.
+We verify the result against the numerical truth rather than against the
+published closed form (Fig.~\ref{fig:validation}), so the implementation is
+validated by its predictive accuracy and not by term-by-term equivalence.
 
 \subsection{Quasi-nonsingular ROE and the KGD STM}
 
 The quasi-nonsingular relative orbital elements (ROE)
 \cite{damico2010thesis,damico2006proximity,sullivan2017survey} express the
-deputy state as scaled element differences --- relative semi-major axis,
-relative mean longitude, and the relative eccentricity and inclination
-vectors --- in which $J_2$ acts almost linearly and near-secularly.
+deputy state as scaled element differences, namely the relative semi-major
+axis, the relative mean longitude, and the relative eccentricity and
+inclination vectors, in which $J_2$ acts almost linearly and near-secularly.
 Koenig, Guffanti, and D'Amico \cite{koenig2017stm} derived closed-form
 $J_2$ STMs in these coordinates valid for arbitrary eccentricity (their
 Eq.~(A6) for the quasi-nonsingular set); this ``KGD'' STM is the
@@ -84,14 +84,14 @@ follow D'Amico \cite{damico2010thesis}.
 
 \subsection{Formation geometry families}
 
-The campaign sweeps three (screening: four) standard 1-km-class geometry
-families (Fig.~\ref{fig:geometry}): pure along-track separation, the
-passively safe eccentricity/inclination-vector-separated geometry of
+The campaign sweeps three standard 1-km-class geometry families, and four in
+the screening tier (Fig.~\ref{fig:geometry}): pure along-track separation,
+the passively safe eccentricity/inclination-vector-separated geometry of
 D'Amico and Montenbruck \cite{damico2006proximity} (``E/I-safe''), a
 projected circular orbit (PCO), and, in the screening tier only, a general
-elliptical relative orbit (GERO); the screening data showed GERO's
-delta-V behavior to be strongly correlated with E/I-safe
-($\rho = 0.88$ across the grid), and it was pruned from the full tier.
+elliptical relative orbit (GERO). The screening data showed GERO's delta-V
+behavior to be strongly correlated with E/I-safe ($\rho = 0.88$ across the
+grid), and it was pruned from the full tier.
 
 \begin{figure}[t]
   \centering
@@ -104,17 +104,17 @@ delta-V behavior to be strongly correlated with E/I-safe
 
 Figure~\ref{fig:validation} shows open-loop prediction error of each
 analytic model against the $J_2$--$J_4$ numerical truth over 30 days for a
-1-km E/I-safe formation. The ordering follows fidelity: CW and
-Schweighart--Sedwick accumulate kilometre-class error over the month
-(13.5 and 12.2~km RMS respectively --- the orbit-averaged $J_2$ correction
-buys S--S only about 10\% over CW at this scale), while the
-first-order-$J_2$ element-space models remain far below: Gim--Alfriend at
-105~m RMS and KGD at 26~m RMS (33~m peak). Two properties of this figure
-matter later: the errors of the element-space models are \emph{secular},
-not random, growing monotonically with time; and a factor of roughly 500
---- nearly three orders of magnitude --- separates the best and worst
-models. Both facts return with consequences in the filter-consistency
-analysis of Section~\ref{sec:results}.
+1-km E/I-safe formation. The ordering follows fidelity. CW and
+Schweighart--Sedwick accumulate kilometre-class error over the month, 13.5
+and 12.2~km RMS respectively, so the orbit-averaged $J_2$ correction buys
+S--S only about 10\% over CW at this scale. The first-order-$J_2$
+element-space models remain far below, with Gim--Alfriend at 105~m RMS and
+KGD at 26~m RMS (33~m peak). Two properties of this figure matter later.
+First, the errors of the element-space models are \emph{secular} rather than
+random, growing monotonically with time. Second, a factor of roughly 500,
+nearly three orders of magnitude, separates the best and worst models. Both
+facts return with consequences in the filter-consistency analysis of
+Section~\ref{sec:results}.
 
 \begin{figure}[t]
   \centering

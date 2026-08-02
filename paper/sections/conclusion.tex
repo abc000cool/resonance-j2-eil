@@ -2,27 +2,28 @@
 
 This paper set out to extend the navigation-versus-control trade analysis
 of Koenig and D'Amico \cite{koenig2018tradeoffs} from a covariance-floor
-abstraction to a campaign with real filters in the loop --- three
-controllers, three relative-motion STMs, and three measurement
-architectures against a numerical $J_2$--$J_4$ truth, 45{,}860 trials in
-all. The extension delivered the intended products: a validated two-tier
-campaign methodology (screening-to-full rank correlation $\rho = 0.83$), a
+abstraction to a campaign with real filters in the loop, covering three
+controllers, three relative-motion STMs, and three measurement architectures
+against a numerical $J_2$--$J_4$ truth, 45{,}860 trials in all. The
+extension delivered the intended products: a validated two-tier campaign
+methodology with a screening-to-full rank correlation of $\rho = 0.83$, a
 controller--sensor reliability map with divergence probabilities and
 explicitly marked infeasible pairings, perfect-navigation Pareto baselines,
-and threshold-robust navigation-accuracy knees --- for LQR under CDGPS,
-3--10~cm, beyond which better sensors buy no fuel.
+and threshold-robust navigation-accuracy knees, which for LQR under CDGPS
+sit at 3--10~cm, beyond which better sensors buy no fuel.
 
-The study's central finding, however, is the one it did not set out to
-produce. Running the estimator explicitly exposed a failure chain that the
-covariance-floor abstraction structurally cannot see: process noise
-calibrated against open-loop propagation residuals leaves the closed-loop
-filter overconfident by more than three orders of magnitude in NIS, worst
-for the most accurate dynamics model, and the resulting trade curves are not
-merely noisy but \emph{inverted} --- fuel cost appearing to fall as sensors
-degrade. Restoring consistency by closed-loop covariance matching recovers
-the physically expected trades and reveals a clean controller distinction
-(LQR pays for poor navigation in fuel, MPC in accuracy), at a quantified
-performance cost; and the residual NEES optimism demonstrates that no
+The study's central finding was not one it set out to produce. Running the
+estimator explicitly exposed a failure chain that the covariance-floor
+abstraction structurally cannot see. Process noise calibrated against
+open-loop propagation residuals leaves the closed-loop filter overconfident
+by more than three orders of magnitude in NIS, worst for the most accurate
+dynamics model, and the resulting trade curves are
+inverted rather than simply noisy, with fuel cost appearing to fall as
+sensors degrade. Restoring
+consistency by closed-loop covariance matching recovers the physically
+expected trades and reveals a clean controller distinction, in which LQR
+pays for poor navigation in fuel and MPC in accuracy, at a quantified
+performance cost. The residual NEES optimism demonstrates that no
 white-noise process model can faithfully represent a secular model error.
 The constructive implication is a bias-augmented (Schmidt--Kalman) filter
 formulation, which this framework is positioned to evaluate next, alongside
@@ -30,8 +31,7 @@ the configured certainty-equivalence stress test.
 
 Every figure in this paper regenerates from the released code and data with
 one command, the tables from two named scripts, and the campaign is seeded
-for exact reproducibility down to the individual trial. We hope the framework serves
-both as a design tool --- reading delta-V consequences off a navigation
-budget --- and as a cautionary, fully inspectable example of how easily an
-estimation-in-the-loop study can be silently corrupted by its filter
-tuning.
+for exact reproducibility down to the individual trial. We hope the
+framework serves both as a design tool, for reading delta-V consequences off
+a navigation budget, and as an inspectable cautionary example of how easily
+an estimation-in-the-loop study can be corrupted by its filter tuning.
