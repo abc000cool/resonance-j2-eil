@@ -151,7 +151,7 @@ Snakefile        figure DAG (Linux/macOS); scripts/make_all.py mirrors it
 - CI (`.github/workflows/ci.yml`): 3.11–3.13 × Linux/macOS/Windows, fast +
   slow tests, an end-to-end mini campaign, and a figure smoke test.
 - `Dockerfile` for a hardened Linux build.
-- Archived release: **v0.1.2 → [10.5281/zenodo.21762567](https://doi.org/10.5281/zenodo.21762567)**
+- Archived release: **v0.1.3 → [10.5281/zenodo.21762778](https://doi.org/10.5281/zenodo.21762778)**
   (source, the full 45,860-trial campaign as Parquet, and the manuscript PDF).
   The version-independent concept DOI, which always resolves to the newest
   release, is [10.5281/zenodo.21696853](https://doi.org/10.5281/zenodo.21696853).
@@ -162,8 +162,8 @@ Snakefile        figure DAG (Linux/macOS); scripts/make_all.py mirrors it
 If you use this software or its data, please cite the archived release
 (machine-readable metadata in `CITATION.cff`):
 
-> Pathak, A. (2026). *eilj2: estimation-in-the-loop J2 formation-keeping* (v0.1.2)
-> [Software and dataset]. Zenodo. https://doi.org/10.5281/zenodo.21762567
+> Pathak, A. (2026). *eilj2: estimation-in-the-loop J2 formation-keeping* (v0.1.3)
+> [Software and dataset]. Zenodo. https://doi.org/10.5281/zenodo.21762778
 
 An interactive summary of the study: <https://when-the-filter-lies.vercel.app>
 
