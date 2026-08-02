@@ -62,13 +62,13 @@ each $H$ is right-composed with the ROE$\to$LVLH Jacobian.
 \section{Reproducibility recipe}\label{app:repro}
 
 \begin{verbatim}
-git clone https://github.com/abc000cool/resonance-j2-eil
-cd resonance-j2-eil
+# fetch the archived release from doi.org/10.5281/zenodo.21696853
+tar xzf eilj2-*-source-and-data.tar.gz
+cd eilj2-*/
 uv sync --all-extras
 uv run pytest -q                  # verification suite
 
-# regenerate every figure from the committed data (equivalently: snakemake
--c8 figures)
+# regenerate every figure (equivalently: snakemake -c8 figures)
 uv run python scripts/make_all.py --phase figures
 # the two tables:
 uv run python scripts/find_knees.py data/full          # Table 3
